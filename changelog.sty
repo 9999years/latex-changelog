@@ -1,4 +1,4 @@
-\ProvidesPackage{changelog}[2018-10-25 Typesetting changelogs]
+\ProvidesPackage{changelog}[2018-10-26 0.2.0 Typesetting changelogs]
 % Description: Provides the changelog environment for typesetting changelogs
 % License:     GPL-3.0
 % Homepage:    https://github.com/9999years/latex-changelog
@@ -8,7 +8,6 @@
 \newif\ifchangelog@color\changelog@colorfalse
 \DeclareOption{color}{\changelog@colortrue}
 \ProcessOptions
-
 
 \ifchangelog@color
 	\RequirePackage{xcolor}
@@ -30,23 +29,27 @@
 		\newcommand{\security  }{\item{\textcolor{ChangelogSecurity}  {\textbf{Security}}   }}
 
 	}
+
+	\newcommand{\changelogyanked}{{\color{ChangelogSecurity}\fbox{YANKED}}}
 \else
 	\newcommand{\@addversionshorthands}{
-		\NewDocumentCommand{\added}{}{\item Added\ }
-		\NewDocumentCommand{\changed}{}{\item Changed\ }
-		\NewDocumentCommand{\deprecated}{}{\item Deprecated\ }
-		\NewDocumentCommand{\removed}{}{\item Removed\ }
-		\NewDocumentCommand{\fixed}{}{\item Fixed\ }
-		\NewDocumentCommand{\security}{}{\item Security\ }
+		\newcommand{\added}     {\item Added\ }
+		\newcommand{\changed}   {\item Changed\ }
+		\newcommand{\deprecated}{\item Deprecated\ }
+		\newcommand{\removed}   {\item Removed\ }
+		\newcommand{\fixed}     {\item Fixed\ }
+		\newcommand{\security}  {\item Security\ }
 	}
 \fi
 
 \define@cmdkeys{version}{author, version, date, changes}
 \define@key{version}{v}{\def\cmdKV@version@version{#1}}
+\define@boolkey{version}{yanked}[true]{}
 
 \define@cmdkeys{changelog}{sectioncmd, title, label}
-\define@boolkeys{changelog}{section}[true]
-\presetkeys{changelog}{sectioncmd=\section, title=Changelog, label=sec:changelog, section}{}
+\define@boolkey{changelog}{section}[true]{}
+\presetkeys{changelog}{sectioncmd=\section, title=Changelog,
+	label=sec:changelog, section}{}
 
 \NewDocumentEnvironment{changelog}{o}
 	{\IfValueT{#1}{\setkeys{changelog, version}{#1}}%
@@ -54,6 +57,7 @@
 		\expandafter\cmdKV@changelog@sectioncmd{\cmdKV@changelog@title}%
 		\expandafter\label{\cmdKV@changelog@label}
 	\fi
+	%\today
 	% version environment; wraps a list
 	\NewDocumentEnvironment{version}{ O{} }
 		{\shortversion{##1}%
@@ -74,7 +78,8 @@
 				\let\cmdKV@version@date\undefined
 			}%
 		}{}%
-		\item[\cmdKV@version@version]
+		\item[\cmdKV@version@version
+		\ifKV@version@yanked\ \changelogyanked\fi]
 			\@ifundefined{cmdKV@version@author}{}{\cmdKV@version@author}
 			\@ifundefined{cmdKV@version@date}{%
 				% if both undefined, add a linebreak

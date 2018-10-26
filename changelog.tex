@@ -11,6 +11,8 @@
 	Changelogs are important. Unfortunately, there are few facilities
 	for typesetting changelogs in \LaTeX. \cl\ defines a \env{changelog}
 	environment to make changelogs simple and intuitive.
+	
+	For rationale, read \https{keepachangelog.com}.
 \end{abstract}
 
 \noterepo{9999years/latex-changelog}
@@ -52,8 +54,8 @@ open a pull request!
 	\pkg{vhistory} provides a decent-looking changelog. However, it's
 		designed for short changes and provides a less-than-elegant
 		interface. Additionally, it's based on the \ctan{ltxtable}
-		package and therefore writes an extra file to the
-		filesystem.
+		package, meaning it makes restrictions on the contents of
+		version information and writes the table to a file.
 
 	\pkg{holtxdoc} has a decent changelog feature (via
 		Oberdiek's \env{History} and \env{Version} environments),
@@ -72,20 +74,31 @@ open a pull request!
 
 \section{The \env{changelog} environment}
 
-\begin{macro}{changelog}\oarg{options}\AfterLastParam
-Wraps \env{description} while providing the \env{version} environment and
-the \cs{shortversion} command. In addition to the options below,
-\meta{options} may contain any of the options for \env{version} (see
-figure~\ref{opt:version}) as a form of ``partial application''; this
-may be useful if, for example, most of your versions have the same author.
+\begin{macro}{changelog}\oarg{options}\AfterLastParam Wraps
+\env{description} while providing the \env{version} environment and the
+\cs{shortversion} command. In addition to the options shown in
+table~\ref{opt:changelog}, \meta{options} may contain any of the options for
+\env{version} (see figure~\ref{opt:version}) as a form of ``partial
+application''; this may be useful if, for example, most of your versions
+have the same author.
 
-\begin{Optionlist}
-	section & Insert a \cs{section} before the changelog? Default: true \\
-	sectioncmd & Which sectioning command to use? Default: \cs{section} \\
-	title & What to title the changelog section? Default: \texttt{Changelog} \\
-	label & What to \cs{label} the section? Default:
-	\texttt{sec:changelog} \\
-\end{Optionlist}
+\begin{table}[h]
+	\centering
+	\caption{Options for the \env{changelog} environment}
+	\label{opt:changelog}
+	\begin{adjustwidth}{1in}{1in}
+	\begin{Optionlist}
+		section & Insert a \cs{section} before the changelog?
+			Default: true \\
+		sectioncmd & Which sectioning command to use? Default:
+			\cs{section} \\
+		title & What to title the changelog section? Default:
+			\texttt{Changelog} \\
+		label & What to \cs{label} the section? Default:
+			\texttt{sec:changelog} \\
+	\end{Optionlist}
+	\end{adjustwidth}
+\end{table}
 \end{macro}
 
 \begin{macro}{version}\oarg{options}\AfterLastParam
@@ -115,6 +128,9 @@ of the other solutions here.}}
 		v & An alias for \option{version} \\
 		author & The author(s) of this version \\
 		date & The date of this version's release \\
+		yanked & Indicates that the release was revoked due to a
+			``serious bug or security issue''; prints a visible
+			notice next to the version number \\
 	\end{Optionlist}
 	\end{adjustwidth}
 \end{table}
@@ -131,13 +147,36 @@ table~\ref{opt:version}, the following options are available for
 	\end{Optionlist}
 \end{macro}
 
+\subsection{Helper commands}
+
+The \cl\ package defines several ``helper commands,'' which are colorized if
+the \option{color} package option has been given. See
+section~\ref{sec:colors} for more information. These commands include a
+trailing space; |\added a cool feature| will print with a space between
+``Added'' and ''a cool feature''.
+
+\begin{macro}{\added}Prints an \cs{item} beginning with ``Added''\end{macro}
+\begin{macro}{\changed}Prints an \cs{item} beginning with ``Changed''\end{macro}
+\begin{macro}{\deprecated}Prints an \cs{item} beginning with ``Deprecated''\end{macro}
+\begin{macro}{\removed}Prints an \cs{item} beginning with ``Removed''\end{macro}
+\begin{macro}{\fixed}Prints an \cs{item} beginning with ``Fixed''\end{macro}
+\begin{macro}{\security}Prints an \cs{item} beginning with ``Security''\end{macro}
+
 \subsection{Customization}
 
 The \env{changelog} environment wraps \env{description}, and the
 \env{version} environment wraps \env{itemize}. One could customize these in
 depth with \ctan{enumitem}.
 
-\subsection{Colors}
+\begin{macro}{\changelogyanked} Prints the ``revoked release'' notice:
+\changelogyanked. See:
+\href{https://keepachangelog.com/en/1.0.0/#yanked}{yanked releases on
+\texttt{keepachangelog.com}}.
+
+\end{macro}
+
+\subsection{Colors}%
+\label{sec:colors}
 
 Colored output is supported by \ctan{xcolor}, which defines several named
 colors (as seen in figure~\ref{fig:colors}); these colors may be redefined
@@ -173,6 +212,18 @@ you'll likely do fine with just e.g.\ \cs{colorlet}|{ChangelogAdded}{magenta}|.
 	\added Really cool features
 \end{version}
 
+\begin{version}[date=2019-01-23]
+	\item A version with only a date
+\end{version}
+
+\begin{version}[v=1.1.0]
+	\item A version with no date
+\end{version}
+
+\begin{version}[v=1.0.1, yanked]
+	\item A version with a terrible bug
+\end{version}
+
 \begin{version}[v=1.0.0, date=2018-10-26]
 	\added a cool feature
 	\changed some \textsc{api} detail
@@ -198,6 +249,18 @@ Which is produced with:
 	\added Really cool features
 \end{version}
 
+\begin{version}[date=2019-01-23]
+	\item A version with only a date
+\end{version}
+
+\begin{version}[v=1.1.0]
+	\item A version with no date
+\end{version}
+
+\begin{version}[v=1.0.1, yanked]
+	\item A version with a terrible bug
+\end{version}
+
 \begin{version}[v=1.0.0, date=2018-10-26]
 	\added a cool feature
 	\changed some \textsc{api} detail
@@ -217,8 +280,11 @@ Which is produced with:
 This is this package's actual changelog --- not an example!
 
 \begin{changelog}[author=Rebecca Turner, section=false]
-\shortversion{v=1.0.0, date=2018-10-26, changes=First stable release}
+\shortversion{v=0.2.0, date=2018-10-26, changes=First stable release}
 \shortversion{v=0.1.0, date=2018-10-25, changes=Initial beta}
 \end{changelog}
+
+\PrintIndex
+\listoftables
 
 \end{document}
