@@ -128,7 +128,9 @@ of the other solutions here.}}
 		v & An alias for \option{version} \\
 		author & The author(s) of this version \\
 		date & The date of this version's release \\
-		yanked & Indicates \\
+		yanked & Indicates that the release was revoked due to a
+			``serious bug or security issue''; prints a visible
+			notice next to the version number \\
 	\end{Optionlist}
 	\end{adjustwidth}
 \end{table}
@@ -165,6 +167,13 @@ trailing space; |\added a cool feature| will print with a space between
 The \env{changelog} environment wraps \env{description}, and the
 \env{version} environment wraps \env{itemize}. One could customize these in
 depth with \ctan{enumitem}.
+
+\begin{macro}{\changelogyanked} Prints the ``revoked release'' notice:
+\changelogyanked. See:
+\href{https://keepachangelog.com/en/1.0.0/#yanked}{yanked releases on
+\texttt{keepachangelog.com}}.
+
+\end{macro}
 
 \subsection{Colors}%
 \label{sec:colors}
