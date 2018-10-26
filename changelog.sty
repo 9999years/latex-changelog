@@ -1,0 +1,86 @@
+\ProvidesPackage{changelog}[2018-10-25 Typesetting changelogs]
+% Description: Provides the changelog environment for typesetting changelogs
+% License:     GPL-3.0
+% Homepage:    https://github.com/9999years/latex-changelog
+%              https://ctan.org/pkg/changelog
+% Maintainer:  Rebecca Turner <637275@gmail.com>
+
+\newif\ifchangelog@color\changelog@colorfalse
+\DeclareOption{color}{\changelog@colortrue}
+\ProcessOptions
+
+
+\ifchangelog@color
+	\RequirePackage{xcolor}
+
+	\colorlet{ChangelogAdded}     {green}
+	\colorlet{ChangelogChanged}   {blue}
+	\colorlet{ChangelogDeprecated}{orange}
+	\colorlet{ChangelogRemoved}   {red}
+	\colorlet{ChangelogFixed}     {cyan}
+	\colorlet{ChangelogSecurity}  {magenta}
+
+	\newcommand{\@addversionshorthands}{
+
+		\newcommand{\added     }{\item{\textcolor{ChangelogAdded}     {\textbf{Added}}      }}
+		\newcommand{\changed   }{\item{\textcolor{ChangelogChanged}   {\textbf{Changed}}    }}
+		\newcommand{\deprecated}{\item{\textcolor{ChangelogDeprecated}{\textbf{Deprecated}} }}
+		\newcommand{\removed   }{\item{\textcolor{ChangelogRemoved}   {\textbf{Removed}}    }}
+		\newcommand{\fixed     }{\item{\textcolor{ChangelogFixed}     {\textbf{Fixed}}      }}
+		\newcommand{\security  }{\item{\textcolor{ChangelogSecurity}  {\textbf{Security}}   }}
+
+	}
+\else
+	\newcommand{\@addversionshorthands}{
+		\NewDocumentCommand{\added}{}{\item Added\ }
+		\NewDocumentCommand{\changed}{}{\item Changed\ }
+		\NewDocumentCommand{\deprecated}{}{\item Deprecated\ }
+		\NewDocumentCommand{\removed}{}{\item Removed\ }
+		\NewDocumentCommand{\fixed}{}{\item Fixed\ }
+		\NewDocumentCommand{\security}{}{\item Security\ }
+	}
+\fi
+
+\define@cmdkeys{version}{author, version, date, changes}
+\define@key{version}{v}{\def\cmdKV@version@version{#1}}
+
+\define@cmdkeys{changelog}{sectioncmd, title, label}
+\define@boolkeys{changelog}{section}[true]
+\presetkeys{changelog}{sectioncmd=\section, title=Changelog, label=sec:changelog, section}{}
+
+\NewDocumentEnvironment{changelog}{o}
+	{\IfValueT{#1}{\setkeys{changelog, version}{#1}}%
+	\ifKV@changelog@section
+		\expandafter\cmdKV@changelog@sectioncmd{\cmdKV@changelog@title}%
+		\expandafter\label{\cmdKV@changelog@label}
+	\fi
+	% version environment; wraps a list
+	\NewDocumentEnvironment{version}{ O{} }
+		{\shortversion{##1}%
+		\begin{itemize}
+			\@addversionshorthands
+		}
+		{\end{itemize}}%
+
+	% short version; "like" a 1-bullet list
+	\NewDocumentCommand{\shortversion}{m}{{%
+		\setkeys{version}{##1}%
+		\@ifundefined{cmdKV@version@version}{
+			\@ifundefined{cmdKV@version@date}{
+				\newcommand{\cmdKV@version@version}{Unreleased}
+				\let\cmdKV@version@date\today
+			}{%
+				\let\cmdKV@version@version\cmdKV@version@date
+				\let\cmdKV@version@date\undefined
+			}%
+		}{}%
+		\item[\cmdKV@version@version]
+			\@ifundefined{cmdKV@version@author}{}{\cmdKV@version@author}
+			\@ifundefined{cmdKV@version@date}{%
+				% if both undefined, add a linebreak
+				\@ifundefined{cmdKV@version@author}{\hspace{0pt}}{}%
+			}{(\cmdKV@version@date)}%
+			\@ifundefined{cmdKV@version@changes}{}{ --- \cmdKV@version@changes}
+			}}
+	\begin{description}}
+	{\end{description}}
