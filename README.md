@@ -17,6 +17,10 @@ LICENSE.md                   | GNU GPLv3
 
 ## Example
 
+    \documentclass{article}
+    \usepackage[color]{changelog}
+    \begin{document}
+
     \begin{changelog}[author=Rebecca Turner]
     \begin{version}
       \added Really cool features
@@ -46,5 +50,11 @@ LICENSE.md                   | GNU GPLv3
     \shortversion{v=0.1.0, date=2018-10-19,
       changes=Initial beta.}
     \end{changelog}
+
+    \end{document}
+
+Which renders roughly as:
+
+![Rendered changelog](screenshot.png)
 
 [keepachangelog.com]: https://keepachangelog.com/
