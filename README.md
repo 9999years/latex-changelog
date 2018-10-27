@@ -8,7 +8,7 @@ Inspired by [keepachangelog.com].
 
 File                         | Description
 -----------------------------|-------------------------------
-changelog.sty                | The brandeis-problemset document class
+changelog.sty                | The changelog package
 changelog.pdf                | Documentation (English)
 changelog.tex                | Documentation source
 changelog-doc.sty            | Documentation styles
