@@ -1,4 +1,4 @@
-\ProvidesPackage{changelog}[2018-10-26 0.2.1 Typesetting changelogs]
+\ProvidesPackage{changelog}[2018-12-28 1.0.0 Typesetting changelogs]
 % Description: Provides the changelog environment for typesetting changelogs
 % License:     GPL-3.0
 % Homepage:    https://github.com/9999years/latex-changelog
@@ -18,74 +18,133 @@
 	\colorlet{ChangelogRemoved}   {red}
 	\colorlet{ChangelogFixed}     {cyan}
 	\colorlet{ChangelogSecurity}  {magenta}
+	\colorlet{ChangelogMiscellaneous}{.}
 
-	\newcommand{\@addversionshorthands}{
-
-		\newcommand{\added     }{\item{\textcolor{ChangelogAdded}     {\textbf{Added}}      }}
-		\newcommand{\changed   }{\item{\textcolor{ChangelogChanged}   {\textbf{Changed}}    }}
-		\newcommand{\deprecated}{\item{\textcolor{ChangelogDeprecated}{\textbf{Deprecated}} }}
-		\newcommand{\removed   }{\item{\textcolor{ChangelogRemoved}   {\textbf{Removed}}    }}
-		\newcommand{\fixed     }{\item{\textcolor{ChangelogFixed}     {\textbf{Fixed}}      }}
-		\newcommand{\security  }{\item{\textcolor{ChangelogSecurity}  {\textbf{Security}}   }}
-
-	}
-
-	\newcommand{\changelogyanked}{{\color{ChangelogSecurity}\fbox{YANKED}}}
+	\newcommand{\changelog@yanked@pre}{\color{ChangelogSecurity}}
+	% parameter = item type (Added, Changed, etc.)
+	\newcommand{\changelog@item@preitem}[1]{\color{Changelog#1}}
+	\newcommand{\changelog@item@postitem}{\hspace{0pt}}
 \else
-	\newcommand{\@addversionshorthands}{
-		\newcommand{\added}     {\item Added\ }
-		\newcommand{\changed}   {\item Changed\ }
-		\newcommand{\deprecated}{\item Deprecated\ }
-		\newcommand{\removed}   {\item Removed\ }
-		\newcommand{\fixed}     {\item Fixed\ }
-		\newcommand{\security}  {\item Security\ }
-	}
+	\newcommand{\changelog@yanked@pre}{}
+	\newcommand{\changelog@item@preitem}[1]{}
+	\newcommand{\changelog@item@postitem}{}
 \fi
+
+\newif\ifchangelog@versionfirst
+\newcommand{\changelog@item@pre}{%
+	\ifchangelog@versionfirst
+		\changelog@versionfirstfalse
+	\else
+		\end{changelogitemize}
+	\fi
+}
+
+\newcommand{\changelog@item}[1]{%
+	\noindent
+	\changelog@item@pre
+	{\changelog@item@preitem{#1}\textbf{#1}}\changelog@item@postitem
+	\begin{changelogitemize}%
+}
+
+\newcommand{\changelogyanked}{{\changelog@yanked@pre\fbox{\textbf{YANKED}}}}
+
+\newcommand{\changelog@sectioncmds}{
+	\newcommand{\added}     {\changelog@item{Added}}
+	\newcommand{\changed}   {\changelog@item{Changed}}
+	\newcommand{\deprecated}{\changelog@item{Deprecated}}
+	\newcommand{\removed}   {\changelog@item{Removed}}
+	\newcommand{\fixed}     {\changelog@item{Fixed}}
+	\newcommand{\security}  {\changelog@item{Security}}
+	\newcommand{\misc}      {\changelog@item{Miscellaneous}}
+}
 
 \define@cmdkeys{version}{author, version, date, changes}
 \define@key{version}{v}{\def\cmdKV@version@version{#1}}
 \define@boolkey{version}{yanked}[true]{}
+\define@boolkey{version}{simple}[true]{}
 
 \define@cmdkeys{changelog}{sectioncmd, title, label}
 \define@boolkey{changelog}{section}[true]{}
 \presetkeys{changelog}{sectioncmd=\section, title=Changelog,
 	label=sec:changelog, section}{}
 
-\NewDocumentEnvironment{changelog}{o}
-	{\IfValueT{#1}{\setkeys{changelog, version}{#1}}%
+\newenvironment{changelogdescription}
+	{\begin{description}}
+	{\end{description}}
+\newenvironment{changelogitemize}
+	{\begin{itemize}}
+	{\end{itemize}}
+
+\newcommand{\changelog@section@maybe}{%
 	\ifKV@changelog@section
 		\expandafter\cmdKV@changelog@sectioncmd{\cmdKV@changelog@title}%
-		\expandafter\label{\cmdKV@changelog@label}
+		\expandafter\label{\cmdKV@changelog@label}%
 	\fi
+}
+
+\newcommand{\changelog@shortversion@definedate}{%
+	\@ifundefined{cmdKV@version@version}{
+		\@ifundefined{cmdKV@version@date}{
+			\newcommand{\cmdKV@version@version}{Unreleased}
+			\let\cmdKV@version@date\today
+		}{%
+			\let\cmdKV@version@version\cmdKV@version@date
+			\let\cmdKV@version@date\undefined
+		}%
+	}{}%
+}
+
+\newcommand{\changelog@yanked@maybe}
+	{\ifKV@version@yanked\ \changelogyanked\fi}
+
+\newcommand{\changelog@shortversion@item}
+	{\cmdKV@version@version
+	\changelog@yanked@maybe}
+
+
+\newcommand{\changelog@shortversion@authordate}{%
+	\@ifundefined{cmdKV@version@author}{}{\cmdKV@version@author}
+	\@ifundefined{cmdKV@version@date}{%
+		% if both undefined, add a linebreak
+		\@ifundefined{cmdKV@version@author}{\hspace{0pt}}{}%
+	}{(\cmdKV@version@date)}%
+}
+
+\newcommand{\changelog@version@pre}{%
+	\par
+	\changelog@versionfirsttrue
+	\changelog@sectioncmds
+	\ifKV@version@simple
+		\begin{changelogitemize}
+	\fi
+}
+\newcommand{\changelog@version@post}{\end{changelogitemize}}
+
+\NewDocumentEnvironment{changelog}{o}
+	{\IfValueT{#1}{\setkeys{changelog, version}{#1}}%
+	\changelog@section@maybe
 	%\today
 	% version environment; wraps a list
 	\NewDocumentEnvironment{version}{ O{} }
-		{\shortversion{##1}%
-		\begin{itemize}
-			\@addversionshorthands
-		}
-		{\end{itemize}}%
+		{\setkeys{version}{##1}%
+		\@shortversion
+		\changelog@version@pre}
+		{\changelog@version@post}%
 
-	% short version; "like" a 1-bullet list
-	\NewDocumentCommand{\shortversion}{m}{{%
-		\setkeys{version}{##1}%
-		\@ifundefined{cmdKV@version@version}{
-			\@ifundefined{cmdKV@version@date}{
-				\newcommand{\cmdKV@version@version}{Unreleased}
-				\let\cmdKV@version@date\today
-			}{%
-				\let\cmdKV@version@version\cmdKV@version@date
-				\let\cmdKV@version@date\undefined
-			}%
-		}{}%
-		\item[\cmdKV@version@version
-		\ifKV@version@yanked\ \changelogyanked\fi]
-			\@ifundefined{cmdKV@version@author}{}{\cmdKV@version@author}
-			\@ifundefined{cmdKV@version@date}{%
-				% if both undefined, add a linebreak
-				\@ifundefined{cmdKV@version@author}{\hspace{0pt}}{}%
-			}{(\cmdKV@version@date)}%
+	% doesn't set keys so this can share code with the version
+	% environment
+	\NewDocumentCommand{\@shortversion}{}{{%
+		\changelog@shortversion@definedate
+		\item[\changelog@shortversion@item]
+			\changelog@shortversion@authordate
 			\@ifundefined{cmdKV@version@changes}{}{ --- \cmdKV@version@changes}
 			}}
-	\begin{description}}
-	{\end{description}}
+
+	% short version; "like" a 1-bullet list
+	% extra braces keep command definitions local
+	\NewDocumentCommand{\shortversion}{m}{{
+		\setkeys{version}{##1}%
+		\@shortversion
+	}}
+	\begin{changelogdescription}}
+	{\end{changelogdescription}}
