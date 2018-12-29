@@ -1,9 +1,9 @@
 \documentclass{ltxdoc}
+\errorcontextlines=10
 \usepackage{changelog-doc}
 \author{Rebecca Turner\thanks{Brandeis University; \email{rebeccaturner@brandeis.edu}}}
 \title{The \cl\ Package}
-\date{2018-10-26}
-
+\date{2018-12-28}
 \begin{document}
 \maketitle
 
@@ -12,7 +12,7 @@
 	for typesetting changelogs in \LaTeX. \cl\ defines a \env{changelog}
 	environment to make changelogs simple and intuitive.
 	
-	For rationale, read \https{keepachangelog.com}.
+	For rationale, read \keepachangelog.
 \end{abstract}
 
 \noterepo{9999years/latex-changelog}
@@ -21,12 +21,44 @@
 \vfill
 \pagebreak
 
+\section{I don't want to read this documentation}
+
+Perfectly understandable. \cl\ comes in a ``simple'' flavor:
+
+\begin{mdframed}
+\begin{lstsample}{}{}
+%    \begin{changelog}[author=Rebecca Turner, simple, sectioncmd=\section*]
+%    \begin{version}[v=1.0.0, date=2018-12-28]
+%    	\item Cool features
+%    	\item Bug fixes
+%    \end{version}
+%    \shortversion{v=0.1.0, date=2018-10-25, changes=Initial beta}
+%    \end{changelog}
+\end{lstsample}
+\end{mdframed}
+
+And a more organized variant based on \keepachangelog:
+
+\begin{mdframed}
+\begin{lstsample}{}{}
+%    \begin{changelog}[author=Rebecca Turner, sectioncmd=\section*]
+%    \begin{version}[v=1.0.0, date=2018-12-28]
+%    	\added
+%    		\item Cool features
+%    	\fixed
+%    		\item Bug fixes
+%    \end{version}
+%    \shortversion{v=0.1.0, date=2018-10-25, changes=Initial beta}
+%    \end{changelog}
+\end{lstsample}
+\end{mdframed}
+
 \section{Intro}
 
 \subsection{Why?}
 
 Read \href{https://olivierlacan.com/}{Olivier Lacan}'s lovely site
-\https{keepachangelog.com}. To excerpt:
+\keepachangelog. To excerpt:
 
 \begin{adjustwidth}{1in}{1in}
 	\subsubsection{What is a changelog?}
@@ -131,6 +163,10 @@ of the other solutions here.}}
 		yanked & Indicates that the release was revoked due to a
 			``serious bug or security issue''; prints a visible
 			notice next to the version number \\
+		simple & Indicates this version isn't split up into
+			\cs{added}, \cs{changed}, etc.\ categories; if this
+			option is given, a \env{version} environment acts
+			like a plain \env{itemize} \\
 	\end{Optionlist}
 	\end{adjustwidth}
 \end{table}
@@ -151,22 +187,37 @@ table~\ref{opt:version}, the following options are available for
 
 The \cl\ package defines several ``helper commands,'' which are colorized if
 the \option{color} package option has been given. See
-section~\ref{sec:colors} for more information. These commands include a
-trailing space; |\added a cool feature| will print with a space between
-``Added'' and ''a cool feature''.
+section~\ref{sec:colors} for more information. These commands introduce a
+\textit{set} of changes within the version. There must be at least one
+\cs{item} between one of these commands and the end of the \env{version}
+environment.
 
-\begin{macro}{\added}Prints an \cs{item} beginning with ``Added''\end{macro}
-\begin{macro}{\changed}Prints an \cs{item} beginning with ``Changed''\end{macro}
-\begin{macro}{\deprecated}Prints an \cs{item} beginning with ``Deprecated''\end{macro}
-\begin{macro}{\removed}Prints an \cs{item} beginning with ``Removed''\end{macro}
-\begin{macro}{\fixed}Prints an \cs{item} beginning with ``Fixed''\end{macro}
-\begin{macro}{\security}Prints an \cs{item} beginning with ``Security''\end{macro}
+\begin{macro}{\added}Introduces a list of \cs{item}s that represent added
+	features\end{macro}
+\begin{macro}{\changed}Introduces a list of \cs{item}s that represent
+	changed features\end{macro}
+\begin{macro}{\deprecated}Introduces a list of \cs{item}s that represent
+	deprecated features\end{macro}
+\begin{macro}{\removed}Introduces a list of \cs{item}s that represent
+	features which have been removed\end{macro}
+\begin{macro}{\fixed}Introduces a list of \cs{item}s that represent bug
+	fixes\end{macro}
+\begin{macro}{\security}Introduces a list of \cs{item}s that represent
+	security-fixes and closed security holes\end{macro}
 
 \subsection{Customization}
 
-The \env{changelog} environment wraps \env{description}, and the
-\env{version} environment wraps \env{itemize}. One could customize these in
-depth with \ctan{enumitem}.
+The \env{changelog} environment wraps \env{changelogdescription} (which is
+defined by default to be just the \env{description} environment), and the
+\env{version} environment wraps \env{changelogitemize}. One could customize
+these in depth with \ctan{enumitem}, as in:
+
+\begin{latexcode}
+\usepackage{enumitem}
+\renewenvironment{changelogitemize}
+	{\begin{itemize}[label=---]}
+	{\end{itemize}}
+\end{latexcode}
 
 \begin{macro}{\changelogyanked} Prints the ``revoked release'' notice:
 \changelogyanked. See:
@@ -205,81 +256,21 @@ you'll likely do fine with just e.g.\ \cs{colorlet}|{ChangelogAdded}{magenta}|.
 	color & Makes output more colorful; this is probably not that useful
 \end{Optionlist}
 
-\begin{changelog}[author=Rebecca Turner,
-	sectioncmd=\subsection,
-	title=Example changelog]
-\begin{version}
-	\added Really cool features
-\end{version}
-
-\begin{version}[date=2019-01-23]
-	\item A version with only a date
-\end{version}
-
-\begin{version}[v=1.1.0]
-	\item A version with no date
-\end{version}
-
-\begin{version}[v=1.0.1, yanked]
-	\item A version with a terrible bug
-\end{version}
-
-\begin{version}[v=1.0.0, date=2018-10-26]
-	\added a cool feature
-	\changed some \textsc{api} detail
-	\deprecated something that was a bad idea in the first place
-	\removed something that was deprecated 3 versions ago
-	\fixed a bug that would delete files instead of saving them
-	\security improved with addition of buffer bound checks
-	\item A change that doesn't fit into any other category
-\end{version}
-\shortversion{v=0.1.0, date=2018-10-19,
-	changes=Initial beta.}
-\end{changelog}
-
-Which is produced with:
-
-\begin{latexcode}
-\usepackage[color]{changelog}
-%...
-\begin{changelog}[author=Rebecca Turner,
-	sectioncmd=\subsection,
-	title=Example changelog]
-\begin{version}
-	\added Really cool features
-\end{version}
-
-\begin{version}[date=2019-01-23]
-	\item A version with only a date
-\end{version}
-
-\begin{version}[v=1.1.0]
-	\item A version with no date
-\end{version}
-
-\begin{version}[v=1.0.1, yanked]
-	\item A version with a terrible bug
-\end{version}
-
-\begin{version}[v=1.0.0, date=2018-10-26]
-	\added a cool feature
-	\changed some \textsc{api} detail
-	\deprecated something that was a bad idea in the first place
-	\removed something that was deprecated 3 versions ago
-	\fixed a bug that would delete files instead of saving them
-	\security improved with addition of buffer bound checks
-	\item A change that doesn't fit into any other category
-\end{version}
-\shortversion{v=0.1.0, date=2018-10-19,
-	changes=Initial beta.}
-\end{changelog}
-\end{latexcode}
-
 \section{Changelog}
 
 This is this package's actual changelog --- not an example!
 
 \begin{changelog}[author=Rebecca Turner, section=false]
+\begin{version}[v=1.0.0, date=2018-12-28]
+\added
+	\item The ``simple'' option for changelogs which aren't split up
+	into sections of added, changed, removed, etc.\ features
+\changed
+	\item Instead of commands like \cs{added} introducing an item, they
+	introduce a list of items; this is what \keepachangelog\
+	actually intended; previous implementations were incorrect to
+	display an ``Added'' (or whatever) marker next to each item.
+\end{version}
 \shortversion{v=0.2.1, date=2018-10-26, changes=Documented \option{yanked}
 	option}
 \shortversion{v=0.2.0, date=2018-10-26, changes=First stable release}

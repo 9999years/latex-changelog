@@ -1,4 +1,5 @@
 \usepackage{hypdoc}
+\PassOptionsToPackage{writefile}{listings}
 \usepackage[
 	loadHyperref=false,
 	createIndexEntries=false
@@ -7,10 +8,12 @@
 \PageIndex
 \EnableCrossrefs
 
+\usepackage{lstdoc}
 \usepackage{textcomp} % needed for listings
 \usepackage{xparse}
 \usepackage{xkeyval}
 \usepackage{changepage}
+\usepackage{mdframed}
 
 \usepackage[color]{changelog}
 
@@ -18,7 +21,6 @@
 
 \newcommand{\email}[1]{\href{mailto:#1}{\texttt{#1}}}
 \newcommand{\https}[1]{\href{https://#1}{\texttt{#1}}}
-\newcommand{\cl}{\ctan{changelog}}
 \newcommand{\todo}[1]{\begin{itemize}\item[\textbf{To-do:}] #1 \end{itemize}}
 \newcommand{\note}[1]{\begin{itemize}\item[\textbf{Note:}] #1 \end{itemize}}
 \newcommand{\ctan}[1]{\href{https://ctan.org/pkg/#1}{\package{#1}}}
@@ -28,6 +30,9 @@
 \newcommand{\filename}[1]{\texttt{#1}}
 \newcommand{\noterepo}[1]{\note{Browse the sources, contribute, or complain at \\
 	\https{github.com/#1}}}
+
+\newcommand{\cl}{\ctan{changelog}}
+\newcommand{\keepachangelog}{\https{keepachangelog.com}}
 
 % definition copied from doc package \DescribeMacro
 \lstnewenvironment{latexfile}[1]
@@ -50,3 +55,35 @@
 		}
 	}
 	{\end{itemize}}
+
+\newif\ifsidebyside@first
+\newcommand{\sidebyside@maybehfill}{%
+	\ifsidebyside@first
+		\hfill
+		\sidebyside@firstfalse
+	\fi
+}
+\newenvironment{sidebyside}{%
+
+	\lstnewenvironment{code}[1][]{%
+		\lstset{style=lstDemoStyleLaTeXCode,
+			basicstyle=\ttfamily\small,
+			frame=single,
+			linewidth=0.45\linewidth,
+			##1}%
+		}
+		{%
+		\sidebyside@maybehfill
+		}%
+	\newenvironment{example}{%
+		\begin{mdframed}[userdefinedwidth=0.45\linewidth]
+		}
+		{%
+		\end{mdframed}\sidebyside@maybehfill
+		}%
+	\sidebyside@firsttrue
+	\medskip
+	\noindent
+	}
+	{%
+	}
