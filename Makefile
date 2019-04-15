@@ -15,6 +15,7 @@ ${PACKAGE}: $(DIST_FILES)
 
 ${PACKAGE}.tar.gz: ${PACKAGE}
 	tar -czf $@ $?
+	make tidy
 	tar -tvf $@
 
 dist: ${PACKAGE}.tar.gz

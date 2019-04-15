@@ -5,6 +5,10 @@
 %              https://ctan.org/pkg/changelog
 % Maintainer:  Rebecca Turner <637275@gmail.com>
 
+\RequirePackage{xparse}
+\RequirePackage{xkeyval}
+\RequirePackage{kvoptions}
+
 \newif\ifchangelog@color\changelog@colorfalse
 \DeclareOption{color}{\changelog@colortrue}
 \ProcessOptions
