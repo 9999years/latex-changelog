@@ -1,21 +1,60 @@
-\documentclass{ltxdoc}
+\documentclass{ltxguidex}
+\usepackage{fontspec}
 \errorcontextlines=10
-\usepackage{changelog-doc}
+\usepackage{changelog}
+\usepackage{changepage}
+\newcommand{\cl}{\ctan{changelog}}
+\newcommand{\keepachangelog}{\https{keepachangelog.com}}
+
+% a list of colors; use \color{colorname}
+\makeatletter
+\newenvironment{colorlist}
+	{\begin{itemize}
+		\let\old@item\item
+		\renewcommand{\item}[1]{%
+			\old@item[\fcolorbox{black}{##1}{\vphantom{X}\hspace{1em}}]
+			\texttt{##1}
+		}
+	}
+	{\end{itemize}}
+\makeatother
+
+\makeatletter
+\renewcommand{\SX@explpreset}{
+	language=[LaTeX]TeX,
+	numbers=none,
+}
+\makeatother
+
+\setmainfont{Tiempos Text}
+\usepackage{FiraSans}
+\usepackage{FiraMono}
+\lstset{basewidth=0.6em}
+
+
+\NewDocumentEnvironment{ctandescription}{}
+	{\NewDocumentCommand{\pkg}{m}{\item[\ctan{##1}]}
+	\begin{description}}
+	{\end{description}}
+
 \author{Rebecca Turner\thanks{Brandeis University; \email{rebeccaturner@brandeis.edu}}}
 \title{The \cl\ Package}
-\date{2018-12-28}
+\date{${VERSION}$}
 \begin{document}
 \maketitle
 
 \begin{abstract}
 	Changelogs are important. Unfortunately, there are few facilities
-	for typesetting changelogs in \LaTeX. \cl\ defines a \env{changelog}
+	for typesetting changelogs in \LaTeX. \cl\ defines a |changelog|
 	environment to make changelogs simple and intuitive.
 	
 	For rationale, read \keepachangelog.
 \end{abstract}
 
-\noterepo{9999years/latex-changelog}
+\begin{note}
+	Browse the sources, contribute, or complain at \\
+	\https{github.com/9999years/latex-changelog}
+\end{note}
 
 \tableofcontents
 \vfill
@@ -25,33 +64,29 @@
 
 Perfectly understandable. \cl\ comes in a ``simple'' flavor:
 
-\begin{mdframed}
-\begin{lstsample}{}{}
-%    \begin{changelog}[author=Rebecca Turner, simple, sectioncmd=\section*]
-%    \begin{version}[v=1.0.0, date=2018-12-28]
-%    	\item Cool features
-%    	\item Bug fixes
-%    \end{version}
-%    \shortversion{v=0.1.0, date=2018-10-25, changes=Initial beta}
-%    \end{changelog}
-\end{lstsample}
-\end{mdframed}
+\begin{LTXexample}
+\begin{changelog}[author=Rebecca Turner, simple, sectioncmd=\section*]
+\begin{version}[v=1.0.0, date=2018-12-28]
+  \item Cool features
+  \item Bug fixes
+\end{version}
+\shortversion{v=0.1.0, date=2018-10-25, changes=Initial beta}
+\end{changelog}
+\end{LTXexample}
 
 And a more organized variant based on \keepachangelog:
 
-\begin{mdframed}
-\begin{lstsample}{}{}
-%    \begin{changelog}[author=Rebecca Turner, sectioncmd=\section*]
-%    \begin{version}[v=1.0.0, date=2018-12-28]
-%    	\added
-%    		\item Cool features
-%    	\fixed
-%    		\item Bug fixes
-%    \end{version}
-%    \shortversion{v=0.1.0, date=2018-10-25, changes=Initial beta}
-%    \end{changelog}
-\end{lstsample}
-\end{mdframed}
+\begin{LTXexample}
+\begin{changelog}[author=Rebecca Turner, sectioncmd=\section*]
+\begin{version}[v=1.0.0, date=2018-12-28]
+  \added
+    \item Cool features
+  \fixed
+    \item Bug fixes
+\end{version}
+\shortversion{v=0.1.0, date=2018-10-25, changes=Initial beta}
+\end{changelog}
+\end{LTXexample}
 
 \section{Intro}
 
@@ -90,7 +125,7 @@ open a pull request!
 		version information and writes the table to a file.
 
 	\pkg{holtxdoc} has a decent changelog feature (via
-		Oberdiek's \env{History} and \env{Version} environments),
+		Oberdiek's |History| and |Version| environments),
 		but \ctan{holtxdoc} ``contains some private macros and setup
 		for my needs. Thus do not use it.'' In addition, Oberdiek's
 		changelogs don't support multiple authors.
@@ -104,37 +139,32 @@ open a pull request!
 		let friends dump git logs into changelogs}.
 \end{ctandescription}
 
-\section{The \env{changelog} environment}
+\section{The \texttt{changelog} environment}
 
-\begin{macro}{changelog}\oarg{options}\AfterLastParam Wraps
-\env{description} while providing the \env{version} environment and the
-\cs{shortversion} command. In addition to the options shown in
-table~\ref{opt:changelog}, \meta{options} may contain any of the options for
-\env{version} (see figure~\ref{opt:version}) as a form of ``partial
-application''; this may be useful if, for example, most of your versions
-have the same author.
+\begin{desc}
+|\begin{changelog}[<options>]...\end{changelog}|
+\end{desc}
+Wraps |description| while providing the |version| environment and the
+\cs{shortversion} command. In addition to the options shown below,
+\meta{options} may contain any of the options for |version| as a form of
+``partial application''; this may be useful if, for example, most of your
+versions have the same author.
 
-\begin{table}[h]
-	\centering
-	\caption{Options for the \env{changelog} environment}
-	\label{opt:changelog}
-	\begin{adjustwidth}{1in}{1in}
-	\begin{Optionlist}
-		section & Insert a \cs{section} before the changelog?
-			Default: true \\
-		sectioncmd & Which sectioning command to use? Default:
-			\cs{section} \\
-		title & What to title the changelog section? Default:
-			\texttt{Changelog} \\
-		label & What to \cs{label} the section? Default:
-			\texttt{sec:changelog} \\
-	\end{Optionlist}
-	\end{adjustwidth}
-\end{table}
-\end{macro}
+\begin{keys}
+	\key{section}[\bool][true]
+		Insert a \cs{section} before the changelog?
+	\key{sectioncmd}[\m{command}][\cs{section}]
+		Which sectioning command to use?
+	\key{title}[\m{txt}][Changelog]
+		What to title the changelog section?
+	\key{label}[\m{label}][sec:changelog]
+		What to \cs{label} the section?
+\end{keys}
 
-\begin{macro}{version}\oarg{options}\AfterLastParam
-Gives a single version; wraps \env{itemize}.
+\begin{desc}
+|\begin{version}[<options>]...\end{version}|
+\end{desc}
+Gives a single version; wraps |itemize|.
 
 If the \option{date} option is absent, the date isn't printed.
 
@@ -150,66 +180,68 @@ package or
 \href{https://tex.stackexchange.com/questions/152392/date-format-yyyy-mm-dd}{any
 of the other solutions here.}}
 
-\begin{table}[h]
-	\centering
-	\caption{Options for the \env{version} environment}%
-	\label{opt:version}
-	\begin{adjustwidth}{1in}{1in}
-	\begin{Optionlist}
-		version & The version string for this version \\
-		v & An alias for \option{version} \\
-		author & The author(s) of this version \\
-		date & The date of this version's release \\
-		yanked & Indicates that the release was revoked due to a
-			``serious bug or security issue''; prints a visible
-			notice next to the version number \\
-		simple & Indicates this version isn't split up into
-			\cs{added}, \cs{changed}, etc.\ categories; if this
-			option is given, a \env{version} environment acts
-			like a plain \env{itemize} \\
-	\end{Optionlist}
-	\end{adjustwidth}
-\end{table}
+\m{options} may include:
 
-\end{macro}
+\begin{keys}
+	\key{version}[\m{version string}]
+		The version string for this version
+	\key{v}[\m{version string}]
+		An alias for \option{version}
+	\key{author}[\m{author(s)}]
+		The author(s) of this version
+	\key{date}[\m{date string}]
+		The date of this version's release
+	\key{yanked}[\bool][false]
+		Indicates that the release was revoked due to a ``serious bug or
+		security issue''; prints a visible notice next to the version number
+	\key{simple}[\bool][false]
+		Indicates this version isn't split up into \cs{added}, \cs{changed},
+		etc.\ categories; if this option is given, a |version| environment acts
+		like a plain |itemize|
+	\key{short}[\bool][false]
+		Renders a short version, like |\shortversion|'s \option{changes} option;
+		useful if you need to put verbatim material in the changes which would
+		otherwise cause an error due to being used in an argument.
+\end{keys}
 
-\begin{macro}{\shortversion}\marg{options}\AfterLastParam
-A short, one-line version. In addition to the options specified in
-table~\ref{opt:version}, the following options are available for
-\cs{shortversion}:
+\begin{desc}
+|\shortversion{<options>}|
+\end{desc}
+A short, one-line version. In addition to |version|'s options, the following
+options are available for \cs{shortversion}:
 
-	\begin{Optionlist}
-		changes & The changes to display for this version \\
-	\end{Optionlist}
-\end{macro}
+\begin{keys}
+	\key{changes}[\m{change text}] The changes to display for this version
+\end{keys}
 
 \subsection{Helper commands}
 
-The \cl\ package defines several ``helper commands,'' which are colorized if
-the \option{color} package option has been given. See
-section~\ref{sec:colors} for more information. These commands introduce a
-\textit{set} of changes within the version. There must be at least one
-\cs{item} between one of these commands and the end of the \env{version}
-environment.
+The \cl\ package defines several ``helper commands.'' These commands
+introduce a \textit{set} of changes within the version. There must be at
+least one \cs{item} between one of these commands and the end of the
+|version| environment.
 
-\begin{macro}{\added}Introduces a list of \cs{item}s that represent added
-	features\end{macro}
-\begin{macro}{\changed}Introduces a list of \cs{item}s that represent
-	changed features\end{macro}
-\begin{macro}{\deprecated}Introduces a list of \cs{item}s that represent
-	deprecated features\end{macro}
-\begin{macro}{\removed}Introduces a list of \cs{item}s that represent
-	features which have been removed\end{macro}
-\begin{macro}{\fixed}Introduces a list of \cs{item}s that represent bug
-	fixes\end{macro}
-\begin{macro}{\security}Introduces a list of \cs{item}s that represent
-	security-fixes and closed security holes\end{macro}
+Note that these commands are \emph{only} available when not using
+the \option{simple} option!
+
+\begin{desc}|\added|\end{desc}Introduces a list of \cs{item}s that represent added
+	features
+\begin{desc}|\changed|\end{desc}Introduces a list of \cs{item}s that represent
+	changed features
+\begin{desc}|\deprecated|\end{desc}Introduces a list of \cs{item}s that represent
+	deprecated features
+\begin{desc}|\removed|\end{desc}Introduces a list of \cs{item}s that represent
+	features which have been removed
+\begin{desc}|\fixed|\end{desc}Introduces a list of \cs{item}s that represent bug
+	fixes
+\begin{desc}|\security|\end{desc}Introduces a list of \cs{item}s that represent
+	security-fixes and closed security holes
 
 \subsection{Customization}
 
-The \env{changelog} environment wraps \env{changelogdescription} (which is
-defined by default to be just the \env{description} environment), and the
-\env{version} environment wraps \env{changelogitemize}. One could customize
+The |changelog| environment wraps |changelogdescription| (which is
+defined by default to be just the |description| environment), and the
+|version| environment wraps |changelogitemize|. One could customize
 these in depth with \ctan{enumitem}, as in:
 
 \begin{latexcode}
@@ -219,48 +251,31 @@ these in depth with \ctan{enumitem}, as in:
 	{\end{itemize}}
 \end{latexcode}
 
-\begin{macro}{\changelogyanked} Prints the ``revoked release'' notice:
+\begin{desc}
+|\changelogyanked|
+\end{desc}
+Prints the ``revoked release'' notice:
 \changelogyanked. See:
 \href{https://keepachangelog.com/en/1.0.0/#yanked}{yanked releases on
 \texttt{keepachangelog.com}}.
-
-\end{macro}
-
-\subsection{Colors}%
-\label{sec:colors}
-
-Colored output is supported by \ctan{xcolor}, which defines several named
-colors (as seen in figure~\ref{fig:colors}); these colors may be redefined
-as needed. While the \ctan{xcolor} documentation goes into great detail,
-you'll likely do fine with just e.g.\ \cs{colorlet}|{ChangelogAdded}{magenta}|.
-
-\begin{figure}[h]
-	\centering
-	\begin{adjustwidth}{1in}{1in}
-	\begin{colorlist}
-		\item{ChangelogAdded}
-		\item{ChangelogChanged}
-		\item{ChangelogDeprecated}
-		\item{ChangelogRemoved}
-		\item{ChangelogFixed}
-		\item{ChangelogSecurity}
-	\end{colorlist}
-	\end{adjustwidth}
-	\caption{Colors provided by the \cl\ package}
-	\label{fig:colors}
-\end{figure}
-
-\subsubsection{Package options}
-
-\begin{Optionlist}
-	color & Makes output more colorful; this is probably not that useful
-\end{Optionlist}
 
 \section{Changelog}
 
 This is this package's actual changelog --- not an example!
 
 \begin{changelog}[author=Rebecca Turner, section=false]
+\begin{version}[v=2.0.0, date=2019-04-15]
+\added
+	\item Better error handling; more informative messages for empty
+	\texttt{version} or \texttt{changelog} environments.
+	\item \option{short} option in versions.
+\removed
+	\item Removed \texttt{color} package option.
+\fixed
+	\item Added dependencies for \ctan{xparse} and \ctan{xkeyval}, which had
+	erroneously been excluded from the package.
+\end{version}
+
 \begin{version}[v=1.0.0, date=2018-12-28]
 \added
 	\item The ``simple'' option for changelogs which aren't split up
@@ -271,13 +286,11 @@ This is this package's actual changelog --- not an example!
 	actually intended; previous implementations were incorrect to
 	display an ``Added'' (or whatever) marker next to each item.
 \end{version}
+
 \shortversion{v=0.2.1, date=2018-10-26, changes=Documented \option{yanked}
 	option}
 \shortversion{v=0.2.0, date=2018-10-26, changes=First stable release}
 \shortversion{v=0.1.0, date=2018-10-25, changes=Initial beta}
 \end{changelog}
-
-\PrintIndex
-\listoftables
 
 \end{document}
