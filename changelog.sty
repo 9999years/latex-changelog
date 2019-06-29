@@ -21,6 +21,43 @@
 
 \RequirePackage{xparse}
 \RequirePackage{xkeyval}
+\RequirePackage{translations}
+
+% See https://github.com/olivierlacan/keep-a-changelog/issues/195
+% for a discussion about the term yanked
+
+% Fallback translations will be used if there is no translation for
+% the current document language
+\DeclareTranslationFallback{changelog-Added}{Added}
+\DeclareTranslationFallback{changelog-Changed}{Changed}
+\DeclareTranslationFallback{changelog-Deprecated}{Deprecated}
+\DeclareTranslationFallback{changelog-Removed}{Removed}
+\DeclareTranslationFallback{changelog-Fixed}{Fixed}
+\DeclareTranslationFallback{changelog-Security}{Security}
+\DeclareTranslationFallback{changelog-Miscellaneous}{Miscellaneous}
+\DeclareTranslationFallback{changelog-Unreleased}{Unreleased}
+\DeclareTranslationFallback{changelog-Yanked}{YANKED}
+% English translations
+\DeclareTranslation{English}{changelog-Added}{Added}
+\DeclareTranslation{English}{changelog-Changed}{Changed}
+\DeclareTranslation{English}{changelog-Deprecated}{Deprecated}
+\DeclareTranslation{English}{changelog-Removed}{Removed}
+\DeclareTranslation{English}{changelog-Fixed}{Fixed}
+\DeclareTranslation{English}{changelog-Security}{Security}
+\DeclareTranslation{English}{changelog-Miscellaneous}{Miscellaneous}
+\DeclareTranslation{English}{changelog-Unreleased}{Unreleased}
+\DeclareTranslation{English}{changelog-Yanked}{YANKED}
+% German translations
+% Alternative german translations as comment at the end of the line
+\DeclareTranslation{German}{changelog-Added}{Hinzugef\"{u}gt}% Neu
+\DeclareTranslation{German}{changelog-Changed}{Ge\"{a}ndert}
+\DeclareTranslation{German}{changelog-Deprecated}{Überholt}% Veraltet
+\DeclareTranslation{German}{changelog-Removed}{Entfernt}
+\DeclareTranslation{German}{changelog-Fixed}{Behoben}% Fehlerbehebung
+\DeclareTranslation{German}{changelog-Security}{Sicherheit}
+\DeclareTranslation{German}{changelog-Miscellaneous}{Verschiedenes}
+\DeclareTranslation{German}{changelog-Unreleased}{Unver\"{o}ffentlicht}
+\DeclareTranslation{German}{changelog-Yanked}{Zur{\"u}ckgezogen}
 
 \newif\ifchangelog@versionfirst
 \newcommand{\changelog@item}[1]{%
@@ -34,16 +71,16 @@
 	\begin{changelogitemize}%
 }
 
-\newcommand{\changelogyanked}{\fbox{\textbf{YANKED}}}
+\newcommand{\changelogyanked}{\fbox{\textbf{\GetTranslation{changelog-Yanked}}}}
 
 \newcommand{\changelog@sectioncmds}{
-	\newcommand{\added}     {\changelog@item{Added}}
-	\newcommand{\changed}   {\changelog@item{Changed}}
-	\newcommand{\deprecated}{\changelog@item{Deprecated}}
-	\newcommand{\removed}   {\changelog@item{Removed}}
-	\newcommand{\fixed}     {\changelog@item{Fixed}}
-	\newcommand{\security}  {\changelog@item{Security}}
-	\newcommand{\misc}      {\changelog@item{Miscellaneous}}
+	\newcommand{\added}     {\changelog@item{\GetTranslation{changelog-Added}}}
+	\newcommand{\changed}   {\changelog@item{\GetTranslation{changelog-Changed}}}
+	\newcommand{\deprecated}{\changelog@item{\GetTranslation{changelog-Deprecated}}}
+	\newcommand{\removed}   {\changelog@item{\GetTranslation{changelog-Removed}}}
+	\newcommand{\fixed}     {\changelog@item{\GetTranslation{changelog-Fixed}}}
+	\newcommand{\security}  {\changelog@item{\GetTranslation{changelog-Security}}}
+	\newcommand{\misc}      {\changelog@item{\GetTranslation{changelog-Miscellaneous}}}
 }
 
 \define@cmdkeys{version}{author, version, date, changes}
@@ -74,7 +111,7 @@
 \newcommand{\changelog@shortversion@definedate}{%
 	\@ifundefined{cmdKV@version@version}{
 		\@ifundefined{cmdKV@version@date}{
-			\newcommand{\cmdKV@version@version}{Unreleased}
+			\newcommand{\cmdKV@version@version}{\GetTranslation{changelog-Unreleased}}
 			\let\cmdKV@version@date\today
 		}{%
 			\let\cmdKV@version@version\cmdKV@version@date

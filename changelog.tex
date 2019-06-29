@@ -1,23 +1,17 @@
 \documentclass{ltxguidex}
+% for demonstrating translations
+\usepackage[german, american]{babel}
+%\babelprovide{chinese}
+%\usepackage{translations}
+%\DeclareLanguage{Chinese}
+%\DeclareTranslation{Chinese}{changelog-added}{新增}
+
 \usepackage{fontspec}
 \errorcontextlines=10
 \usepackage{changelog}
 \usepackage{changepage}
 \newcommand{\cl}{\ctan{changelog}}
 \newcommand{\keepachangelog}{\https{keepachangelog.com}}
-
-% a list of colors; use \color{colorname}
-\makeatletter
-\newenvironment{colorlist}
-	{\begin{itemize}
-		\let\old@item\item
-		\renewcommand{\item}[1]{%
-			\old@item[\fcolorbox{black}{##1}{\vphantom{X}\hspace{1em}}]
-			\texttt{##1}
-		}
-	}
-	{\end{itemize}}
-\makeatother
 
 \makeatletter
 \renewcommand{\SX@explpreset}{
@@ -259,11 +253,78 @@ Prints the ``revoked release'' notice:
 \href{https://keepachangelog.com/en/1.0.0/#yanked}{yanked releases on
 \texttt{keepachangelog.com}}.
 
+\section{Translations}
+
+Want to use \cl\ in a non-English document? Great! Thanks to a contribution
+by Holger Schieferdecker (see section~\ref{s:contrib} below), \cl\ comes
+with translations for English, German, and support for adding new
+translations. To use built-in translations, simply load \ctan{babel} with
+the desired language:
+\begin{otherlanguage}{german}
+\begin{LTXexample}
+% In the preamble:
+% \usepackage[german]{babel}
+
+\begin{changelog}[section=false, author=Holger Schieferdecker]
+  \begin{version}[v=1.0.0]
+    \added
+      \item Features!
+  \end{version}
+\end{changelog}
+\end{LTXexample}
+\end{otherlanguage}
+
+\subsection{Creating new translations}
+
+\cl\ uses the \ctan{translations} package to provide translations, and a
+complete translation looks like this:
+\begin{latexcode}
+\documentclass{article}
+\usepackage[english]{babel}
+\usepackage{translations}
+\DeclareTranslation{English}{changelog-Added}{Added}
+\DeclareTranslation{English}{changelog-Changed}{Changed}
+\DeclareTranslation{English}{changelog-Deprecated}{Deprecated}
+\DeclareTranslation{English}{changelog-Removed}{Removed}
+\DeclareTranslation{English}{changelog-Fixed}{Fixed}
+\DeclareTranslation{English}{changelog-Security}{Security}
+\DeclareTranslation{English}{changelog-Miscellaneous}{Miscellaneous}
+\DeclareTranslation{English}{changelog-Unreleased}{Unreleased}
+\DeclareTranslation{English}{changelog-Yanked}{YANKED}
+\begin{document}
+% ...
+\end{document}
+\end{latexcode}
+Refer to the
+\href{http://mirrors.ctan.org/macros/latex/contrib/translations/translations_en.pdf}{\texttt{translations}
+package documentation} and the
+\href{http://mirrors.ctan.org/macros/latex/required/babel/base/babel.pdf}{\texttt{babel}
+package documentation} for more information.
+
+If you create a translation, please \href{mailto:637275@gmail.com}{send me
+an email} and I'll incorporate the translation into \cl's next release!
+
+\section{Contributors}%
+\label{s:contrib}
+
+\begin{description}
+	\item[Rebecca Turner] Original implementation.
+	\item[Holger Schieferdecker]
+	Internationalization support and German translations.
+\end{description}
+
 \section{Changelog}
 
 This is this package's actual changelog --- not an example!
 
 \begin{changelog}[author=Rebecca Turner, section=false]
+\begin{version}[v=2.1.0, date=2019-06-29,
+	author={Holger Schieferdecker}]
+\added
+	\item Internationalization support.
+	\item German translations.
+\end{version}
+
 \begin{version}[v=2.0.0, date=2019-04-15]
 \added
 	\item Better error handling; more informative messages for empty

@@ -1,4 +1,4 @@
-VERSION := 2019\/04\/15 2.0.0
+VERSION := 2019\/06\/29 2.1.0
 PACKAGE := changelog
 
 ROOT_DIR := $(CURDIR)
@@ -26,6 +26,14 @@ LATEXMK_CLEAN := $(LATEXMK) -c
 ${PACKAGE}/${PACKAGE}.pdf: ${PACKAGE}/${PACKAGE}.tex
 	cd ${PACKAGE} && $(LATEXMK) ${PACKAGE}.tex
 
+.PHONY: dist
+dist: ${PACKAGE}.tar.gz
+${PACKAGE}.tar.gz: ${PACKAGE}
+	cd ${PACKAGE} && $(LATEXMK_CLEAN) && rm -rf extra *.fls
+	tar -czf $@ $?
+	make tidy
+	tar -tvf $@
+
 .PHONY: dir-no-pdf
 dir-no-pdf: $(DIST_FILES) $(DOC_FILES)
 	# copies files over, escapes versions
@@ -40,14 +48,7 @@ dir-pdf: dir-no-pdf ${PACKAGE}/${PACKAGE}.tex
 ${PACKAGE}: $(DIST_FILES) $(DOC_FILES)
 	make dir-no-pdf dir-pdf
 	chmod -x,+r ${PACKAGE}/*
-
-.PHONY: dist
-dist: ${PACKAGE}.tar.gz
-${PACKAGE}.tar.gz: ${PACKAGE}
-	cd ${PACKAGE} && $(LATEXMK_CLEAN) && rm -rf extra *.fls
-	tar -czf $@ $?
-	make tidy
-	tar -tvf $@
+	chmod +x ${PACKAGE}/extra
 
 tidy:
 	# all generated files but the pdf and .tar.gz
