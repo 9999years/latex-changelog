@@ -1,4 +1,4 @@
-VERSION := 2019\/06\/29 2.1.0
+VERSION := 2019\/07\/06 2.1.0
 PACKAGE := changelog
 
 ROOT_DIR := $(CURDIR)
