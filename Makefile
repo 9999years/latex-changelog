@@ -23,9 +23,6 @@ INSTALL_DIR := $(TEXMF_ROOT)/tex/latex/${PACKAGE}
 LATEXMK := latexmk -pdf -r $(ROOT_DIR)/.latexmkrc -pvc- -pv-
 LATEXMK_CLEAN := $(LATEXMK) -c
 
-${PACKAGE}/${PACKAGE}.pdf: ${PACKAGE}/${PACKAGE}.tex
-	cd ${PACKAGE} && $(LATEXMK) ${PACKAGE}.tex
-
 .PHONY: dist
 dist: ${PACKAGE}.tar.gz
 ${PACKAGE}.tar.gz: ${PACKAGE}
@@ -49,6 +46,9 @@ ${PACKAGE}: $(DIST_FILES) $(DOC_FILES)
 	make dir-no-pdf dir-pdf
 	chmod -x,+r ${PACKAGE}/*
 	chmod +x ${PACKAGE}/extra
+
+${PACKAGE}/${PACKAGE}.pdf: ${PACKAGE}/${PACKAGE}.tex
+	cd ${PACKAGE} && $(LATEXMK) ${PACKAGE}.tex
 
 tidy:
 	# all generated files but the pdf and .tar.gz
