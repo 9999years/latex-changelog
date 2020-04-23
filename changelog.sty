@@ -28,6 +28,7 @@
 
 % Fallback translations will be used if there is no translation for
 % the current document language
+\DeclareTranslationFallback{changelog}{Changelog}
 \DeclareTranslationFallback{changelog-Added}{Added}
 \DeclareTranslationFallback{changelog-Changed}{Changed}
 \DeclareTranslationFallback{changelog-Deprecated}{Deprecated}
@@ -38,6 +39,7 @@
 \DeclareTranslationFallback{changelog-Unreleased}{Unreleased}
 \DeclareTranslationFallback{changelog-Yanked}{YANKED}
 % English translations
+\DeclareTranslation{English}{changelog}{Changelog}
 \DeclareTranslation{English}{changelog-Added}{Added}
 \DeclareTranslation{English}{changelog-Changed}{Changed}
 \DeclareTranslation{English}{changelog-Deprecated}{Deprecated}
@@ -49,6 +51,7 @@
 \DeclareTranslation{English}{changelog-Yanked}{YANKED}
 % German translations
 % Alternative german translations as comment at the end of the line
+\DeclareTranslation{German}{changelog}{\"Anderungsnachweis}
 \DeclareTranslation{German}{changelog-Added}{Hinzugef\"{u}gt}% Neu
 \DeclareTranslation{German}{changelog-Changed}{Ge\"{a}ndert}
 \DeclareTranslation{German}{changelog-Deprecated}{Überholt}% Veraltet
@@ -91,7 +94,7 @@
 
 \define@cmdkeys{changelog}{sectioncmd, title, label}
 \define@boolkey{changelog}{section}[true]{}
-\presetkeys{changelog}{sectioncmd=\section, title=Changelog,
+\presetkeys{changelog}{sectioncmd=\section, title=\GetTranslation{changelog},
 	label=sec:changelog, section}{}
 
 \newenvironment{changelogdescription}
