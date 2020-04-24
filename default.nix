@@ -43,14 +43,12 @@ let
       '';
 
       installPhase = ''
-        mkdir -p $out
-        ${if tar then
-
-        ''
+        ${if tar then ''
           tar -czf ${pkg}.tar.gz ${pkg}
           tar -tvf ${pkg}.tar.gz
           cp ${pkg}.tar.gz $out
         '' else ''
+          mkdir -p $out
           cp -r ${pkg} $out
         ''}
       '';
@@ -61,4 +59,5 @@ in {
     pdf = false;
     tar = false;
   };
+  dir-pdf = build { tar = false; };
 }
