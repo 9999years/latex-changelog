@@ -2,10 +2,11 @@
 let
   inherit (pkgs) stdenv lib;
   pkg = "changelog";
+  versionSentinel = "\${VERSION}$";
   build = { pdf ? true, tar ? true, ... }:
     stdenv.mkDerivation rec {
       name = "latex-${pkg}";
-      version = "2020/04/23 2.2.0";
+      version = "2020/04/23 2.2.1";
 
       buildInputs = with pkgs; [
         (texlive.combine rec {
@@ -33,10 +34,11 @@ let
       dontConfigure = true;
       buildPhase = let latexmk = "latexmk -pdf -r ./latexmkrc -pvc- -pv-";
       in ''
-        sd --string-mode '${""}''${VERSION}$' ${version}
+        sd --string-mode '${versionSentinel}' '${version}' *.tex *.sty
         ${lib.optionalString pdf "${latexmk} *.tex"}
 
-        mkdir -p ${pkg}
+        rm -rf ${pkg}
+        mkdir ${pkg}
         cp $distSrcs ${pkg}
       '';
 
