@@ -13,9 +13,11 @@ File                         | Description
 changelog.sty                | The changelog package
 changelog.pdf                | Documentation (English)
 changelog.tex                | Documentation source
-changelog-doc.sty            | Documentation styles
+example.tex                  | Example use
+example.pdf                  | Example use (PDF)
+screenshot.png               | Sample screenshot
 README.md                    | This file
-LICENSE.md                   | GNU GPLv3
+LICENSE.txt                  | LPPL v1.3c
 
 [keepachangelog.com]: https://keepachangelog.com/
 [changelog]: https://ctan.org/pkg/changelog

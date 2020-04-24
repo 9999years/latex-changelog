@@ -20,7 +20,13 @@
 }
 \makeatother
 
-\setmainfont{Tiempos Text}
+\setmainfont{TiemposText}[
+	Extension = .otf ,
+	UprightFont = *-Regular ,
+	ItalicFont = *-RegularItalic ,
+	BoldFont = *-Bold ,
+	BoldItalicFont = *-BoldItalic ,
+]
 \usepackage{FiraSans}
 \usepackage{FiraMono}
 \lstset{basewidth=0.6em}
@@ -31,7 +37,7 @@
 	\begin{description}}
 	{\end{description}}
 
-\author{Rebecca Turner\thanks{Brandeis University; \email{rebeccaturner@brandeis.edu}}}
+\author{Rebecca Turner\thanks{Brandeis University; \email{rbt@sent.as}}}
 \title{The \cl\ Package}
 \date{${VERSION}$}
 \begin{document}
@@ -301,7 +307,7 @@ package documentation} and the
 \href{http://mirrors.ctan.org/macros/latex/required/babel/base/babel.pdf}{\texttt{babel}
 package documentation} for more information.
 
-If you create a translation, please \href{mailto:637275@gmail.com}{send me
+If you create a translation, please \href{mailto:rbt@sent.as}{send me
 an email} and I'll incorporate the translation into \cl's next release!
 
 \section{Contributors}%
@@ -311,13 +317,24 @@ an email} and I'll incorporate the translation into \cl's next release!
 	\item[Rebecca Turner] Original implementation.
 	\item[Holger Schieferdecker]
 	Internationalization support and German translations.
+	\item[David Arnold <\email{dar@xoe.solutions}>]
+	Support for translating the changelog's section title and Spanish
+	translations.
 \end{description}
 
 \section{Changelog}
 
 This is this package's actual changelog --- not an example!
 
-\begin{changelog}[author=Rebecca Turner, section=false]
+\begin{changelog}[author=Rebecca Turner <\email{rbt@sent.as}>, section=false]
+\begin{version}[v=2.2.0, date=2020-04-23,
+	author={David Arnold <\email{dar@xoe.solutions}>}]
+\added
+	\item Support for translating the changelog's section title with
+	|\DeclareTranslation{Language}{changelog}{...}|.
+	\item Spanish translations.
+\end{version}
+
 \begin{version}[v=2.1.0, date=2019-06-29,
 	author={Holger Schieferdecker}]
 \added
