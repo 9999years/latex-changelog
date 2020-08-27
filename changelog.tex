@@ -1,10 +1,7 @@
 \documentclass{ltxguidex}
 % for demonstrating translations
 \usepackage[german, american]{babel}
-%\babelprovide{chinese}
 %\usepackage{translations}
-%\DeclareLanguage{Chinese}
-%\DeclareTranslation{Chinese}{changelog-added}{新增}
 
 \usepackage{fontspec}
 \errorcontextlines=10
@@ -20,12 +17,13 @@
 }
 \makeatother
 
-\setmainfont{TiemposText}[
-	Extension = .otf ,
-	UprightFont = *-Regular ,
-	ItalicFont = *-RegularItalic ,
-	BoldFont = *-Bold ,
-	BoldItalicFont = *-BoldItalic ,
+\setmainfont{Charter}[
+  Path = /nix/store/8ylkcs5xw8b3glvgp5l66md6hvxdk098-charter-200512/share/fonts/opentype/,
+  Extension = .otf,
+  UprightFont = * Regular,
+  ItalicFont = * Italic,
+  BoldFont = * Bold,
+  BoldItalicFont = * Bold Italic,
 ]
 \usepackage{FiraSans}
 \usepackage{FiraMono}
@@ -261,11 +259,11 @@ Prints the ``revoked release'' notice:
 
 \section{Translations}
 
-Want to use \cl\ in a non-English document? Great! Thanks to a contribution
-by Holger Schieferdecker (see section~\ref{s:contrib} below), \cl\ comes
-with translations for English, German, and support for adding new
-translations. To use built-in translations, simply load \ctan{babel} with
-the desired language:
+Want to use \cl\ in a non-English document? Great! \cl\ comes with
+translations for English, German, Spanish, and French, as well as support
+for adding new translations (see section~\ref{s:contrib} below for
+translation credits). To use built-in translations, simply load \ctan{babel}
+with the desired language:
 \begin{otherlanguage}{german}
 \begin{LTXexample}
 % In the preamble:
@@ -320,6 +318,7 @@ an email} and I'll incorporate the translation into \cl's next release!
 	\item[David Arnold <\email{dar@xoe.solutions}>]
 	Support for translating the changelog's section title and Spanish
 	translations.
+	\item[Damien Calesse <\https{github.com/kranack}>] French translations.
 \end{description}
 
 \section{Changelog}
@@ -327,6 +326,12 @@ an email} and I'll incorporate the translation into \cl's next release!
 This is this package's actual changelog --- not an example!
 
 \begin{changelog}[author=Rebecca Turner <\email{rbt@sent.as}>, section=false]
+\begin{version}[v=2.3.0, date=2020-08-26,
+	author={Damien Calesse <\https{github.com/kranack}>}]
+\added
+	\item French translations.
+\end{version}
+
 \begin{version}[v=2.2.0, date=2020-04-23,
 	author={David Arnold <\email{dar@xoe.solutions}>}]
 \added
