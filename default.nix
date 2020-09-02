@@ -28,7 +28,7 @@ let
   build = { pdf ? true, tar ? true, ... }:
     stdenv.mkDerivation rec {
       name = "latex-${pkg}";
-      version = "2020/08/26 2.3.0";
+      version = "2020/08/26 2.4.0";
 
       buildInputs = with pkgs;
         [
