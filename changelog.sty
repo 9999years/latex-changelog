@@ -38,6 +38,7 @@
 \DeclareTranslationFallback{changelog-Miscellaneous}{Miscellaneous}
 \DeclareTranslationFallback{changelog-Unreleased}{Unreleased}
 \DeclareTranslationFallback{changelog-Yanked}{YANKED}
+\DeclareTranslationFallback{changelog-Printed}{Printed}
 % English translations by Rebecca Turner <rbt@sent.as>
 \DeclareTranslation{English}{changelog}{Changelog}
 \DeclareTranslation{English}{changelog-Added}{Added}
@@ -49,6 +50,7 @@
 \DeclareTranslation{English}{changelog-Miscellaneous}{Miscellaneous}
 \DeclareTranslation{English}{changelog-Unreleased}{Unreleased}
 \DeclareTranslation{English}{changelog-Yanked}{YANKED}
+\DeclareTranslation{English}{changelog-Printed}{Printed}
 % German translations by Holger Schieferdecker
 % Alternative german translations as comment at the end of the line
 \DeclareTranslation{German}{changelog}{\"Anderungsnachweis}
@@ -61,6 +63,7 @@
 \DeclareTranslation{German}{changelog-Miscellaneous}{Verschiedenes}
 \DeclareTranslation{German}{changelog-Unreleased}{Unver\"{o}ffentlicht}
 \DeclareTranslation{German}{changelog-Yanked}{Zur{\"u}ckgezogen}
+\DeclareTranslation{German}{changelog-Printed}{Gedruckt}
 % Spanish translations by David Arnold <dar@xoe.solutions>
 \DeclareTranslation{Spanish}{changelog}{Registro de cambios}
 \DeclareTranslation{Spanish}{changelog-Added}{Agregado}
@@ -108,6 +111,7 @@
 }
 
 \newcommand{\changelogyanked}{\fbox{\textbf{\GetTranslation{changelog-Yanked}}}}
+\newcommand{\changelogprinted}{\fbox{\textbf{\GetTranslation{changelog-Printed}}}}
 
 \newcommand{\changelog@sectioncmds}{
 	\newcommand{\added}     {\changelog@item{\GetTranslation{changelog-Added}}}
@@ -122,6 +126,7 @@
 \define@cmdkeys{version}{author, version, date, changes}
 \define@key{version}{v}{\def\cmdKV@version@version{#1}}
 \define@boolkey{version}{yanked}[true]{}
+\define@boolkey{version}{printed}[true]{}
 \define@boolkey{version}{simple}[true]{}
 \define@boolkey{version}{short}[true]{}
 
@@ -159,9 +164,13 @@
 \newcommand{\changelog@yanked@maybe}
 	{\ifKV@version@yanked\ \changelogyanked\fi}
 
+\newcommand{\changelog@printed@maybe}
+	{\ifKV@version@printed\ \changelogprinted\fi}
+
 \newcommand{\changelog@shortversion@item}
 	{\cmdKV@version@version
-	\changelog@yanked@maybe}
+	\changelog@yanked@maybe
+	\changelog@printed@maybe}
 
 
 \newcommand{\changelog@shortversion@authordate}{%
