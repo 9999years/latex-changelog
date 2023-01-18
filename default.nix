@@ -4,21 +4,21 @@ let
 
   charter = stdenv.mkDerivation rec {
     pname = "charter";
-    version = "200512";
+    version = "210112";
 
     src = fetchzip {
       url = "https://practicaltypography.com/fonts/Charter%20${version}.zip";
       name = "Charter-${version}.zip";
-      sha256 = "1832amplwrxp3cwyf2xnc47f5fasbwhdc2i4sblbhgdgga07pxa0";
+      hash = "sha256-rsKMp+LBEitOFPgM1xF//BLgF3uIRPlBitLdrefmsnw=";
     };
 
     dontConfigure = true;
     dontBuild = true;
     installPhase = ''
       mkdir -p $out/share/fonts
-      mv "Charter/OpenType" $out/share/fonts/opentype
-      mv "Charter/OpenType TT" $out/share/fonts/truetype
-      mv "Charter/WOFF" $out/share/fonts/woff
+      mv "OTF format (best for Mac OS)/Charter" $out/share/fonts/opentype
+      mv "TTF format (best for Windows)/Charter" $out/share/fonts/truetype
+      mv "WOFF2 format (best for web)/Charter" $out/share/fonts/woff
       mv "Charter license.txt" $out/LICENSE.txt
     '';
   };
