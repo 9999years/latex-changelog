@@ -17,15 +17,7 @@
 }
 \makeatother
 
-\setmainfont{Charter}[
-  % TODO: Hardcoding a Nix store path is :(((
-  Path = /nix/store/shmvghwqb1nm368ny3kl3niz4qj173kb-charter-210112/share/fonts/opentype/,
-  Extension = .otf,
-  UprightFont = * Regular,
-  ItalicFont = * Italic,
-  BoldFont = * Bold,
-  BoldItalicFont = * Bold Italic,
-]
+\setmainfont{Charter}
 \usepackage{FiraSans}
 \usepackage{FiraMono}
 \lstset{basewidth=0.6em}
@@ -36,7 +28,7 @@
 	\begin{description}}
 	{\end{description}}
 
-\author{Rebecca Turner\thanks{Brandeis University; \email{rbt@sent.as}}}
+\author{Rebecca Turner\thanks{\email{rbt@sent.as}}}
 \title{The \cl\ Package}
 \date{${VERSION}$}
 \begin{document}

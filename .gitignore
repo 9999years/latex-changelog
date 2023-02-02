@@ -1,5 +1,6 @@
 *.hd
-extra
+/extra
 *.pdf
 *.fls
-changelog
+/changelog
+/result
