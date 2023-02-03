@@ -58,6 +58,9 @@
               src = ./.;
 
               buildInputs = [
+                # We could just use `scheme-full` here, but that's 3.8GB and
+                # this is only like 0.4GB. I guess it is worth enumerating the
+                # packages manually.
                 (pkgs.texlive.combine {
                   inherit
                     (pkgs.texlive)
