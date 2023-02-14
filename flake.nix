@@ -142,7 +142,9 @@
         devShells = {
           changelog = pkgs.mkShell {
             name = "latex-changelog";
-            packages = [];
+            packages = [
+              pkgs.texlab # TeX language server
+            ];
             inputsFrom = [
               packages.changelog
             ];
