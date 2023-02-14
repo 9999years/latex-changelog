@@ -1,4 +1,5 @@
-\ProvidesPackage{changelog}[${VERSION}$ Typesetting changelogs]
+\RequirePackage{expl3}
+\ProvidesExplPackage{changelog}{[[DATE]]}{[[VERSION]]}{Typesetting changelogs}
 % Description: Provides the changelog environment for typesetting changelogs
 % License:     LPPL 1.3c
 % Homepage:    https://github.com/9999years/latex-changelog
@@ -19,8 +20,6 @@
 %
 % This work consists of the files changelog.sty and changelog.tex.
 
-\RequirePackage{xparse}
-\RequirePackage{xkeyval}
 \RequirePackage{translations}
 
 % See https://github.com/olivierlacan/keep-a-changelog/issues/195
@@ -95,148 +94,207 @@
 \DeclareTranslation{Japanese}{changelog-Unreleased}{未公開}
 \DeclareTranslation{Japanese}{changelog-Yanked}{緊急変更}
 
-\newif\ifchangelog@versionfirst
-\newcommand{\changelog@item}[1]{%
-	\noindent
-	\ifchangelog@versionfirst
-		\changelog@versionfirstfalse
-	\else
-		\end{changelogitemize}
-	\fi
-	\textbf{#1}%
-	\begin{changelogitemize}%
-}
+\bool_new:N \g__changelog_version_first_bool
+\cs_set:Npn \changelog__item:n #1
+  {
+    \noindent
+    \bool_if:NTF \g__changelog_version_first_bool
+      {
+        \bool_gset_false:N \g__changelog_version_first_bool
+      }
+      {
+        \end{changelogitemize}
+      }
+    \textbf{#1}
+    \begin{changelogitemize}
+  }
 
-\newcommand{\changelogyanked}{\fbox{\textbf{\GetTranslation{changelog-Yanked}}}}
+\cs_set:Npn \changelogyanked
+  {
+    \fbox{\textbf{\GetTranslation{changelog-Yanked}}}
+  }
 
-\newcommand{\changelog@sectioncmds}{
-	\newcommand{\added}     {\changelog@item{\GetTranslation{changelog-Added}}}
-	\newcommand{\changed}   {\changelog@item{\GetTranslation{changelog-Changed}}}
-	\newcommand{\deprecated}{\changelog@item{\GetTranslation{changelog-Deprecated}}}
-	\newcommand{\removed}   {\changelog@item{\GetTranslation{changelog-Removed}}}
-	\newcommand{\fixed}     {\changelog@item{\GetTranslation{changelog-Fixed}}}
-	\newcommand{\security}  {\changelog@item{\GetTranslation{changelog-Security}}}
-	\newcommand{\misc}      {\changelog@item{\GetTranslation{changelog-Miscellaneous}}}
-}
+\cs_set:Npn \changelog__define_section_cmds
+  {
+    \cs_set:Npn \added      {\changelog__item:n{\GetTranslation{changelog-Added}}}
+    \cs_set:Npn \changed    {\changelog__item:n{\GetTranslation{changelog-Changed}}}
+    \cs_set:Npn \deprecated {\changelog__item:n{\GetTranslation{changelog-Deprecated}}}
+    \cs_set:Npn \removed    {\changelog__item:n{\GetTranslation{changelog-Removed}}}
+    \cs_set:Npn \fixed      {\changelog__item:n{\GetTranslation{changelog-Fixed}}}
+    \cs_set:Npn \security   {\changelog__item:n{\GetTranslation{changelog-Security}}}
+    \cs_set:Npn \misc       {\changelog__item:n{\GetTranslation{changelog-Miscellaneous}}}
+  }
 
-\define@cmdkeys{version}{author, version, date, changes}
-\define@key{version}{v}{\def\cmdKV@version@version{#1}}
-\define@boolkey{version}{yanked}[true]{}
-\define@boolkey{version}{simple}[true]{}
-\define@boolkey{version}{short}[true]{}
 
-\define@cmdkeys{changelog}{sectioncmd, title, label}
-\define@boolkey{changelog}{section}[true]{}
-\presetkeys{changelog}{sectioncmd=\section, title=\GetTranslation{changelog},
-	label=sec:changelog, section}{}
+\keys_define:nn { changelog_version }
+  {
+    author  .tl_set:N   = \g__changelog_author_tl ,
+    v       .tl_set:N   = \g__changelog_version_tl ,
+    version .tl_set:N   = \g__changelog_version_tl ,
+    date    .tl_set:N   = \g__changelog_date_tl ,
+    changes .tl_set:N   = \g__changelog_changes_tl ,
+    yanked  .bool_set:N = \g__changelog_yanked_bool ,
+    simple  .bool_set:N = \g__changelog_simple_bool ,
+    short   .bool_set:N = \g__changelog_short_bool ,
+  }
+
+\keys_define:nn { changelog_changelog }
+  {
+    sectioncmd .tl_set:N    = \g__changelog_sectioncmd_tl ,
+    sectioncmd .initial:n   = \section ,
+    title      .tl_set:N    = \g__changelog_title_tl ,
+    title      .initial:n   = \GetTranslation{changelog} ,
+    label      .tl_set:N    = \g__changelog_label_tl ,
+    label      .initial:n   = sec:changelog ,
+    section    .bool_gset:N = \g__changelog_section_bool ,
+    section    .initial:n   = true ,
+  }
+
+\keys_define:nn { } { changelog_changelog .inherit:n = changelog_version }
 
 \newenvironment{changelogdescription}
-	{\begin{description}}
-	{\end{description}}
+  {\begin{description}}
+  {\end{description}}
 \newenvironment{changelogitemize}
-	{\begin{itemize}}
-	{\end{itemize}}
+  {\begin{itemize}}
+  {\end{itemize}}
 
-\newcommand{\changelog@section@maybe}{%
-	\ifKV@changelog@section
-		\expandafter\cmdKV@changelog@sectioncmd{\cmdKV@changelog@title}%
-		\expandafter\label{\cmdKV@changelog@label}%
-	\fi
-}
+\cs_set:Npn \changelog__section_maybe
+  {
+    \bool_if:NTF \g__changelog_section_bool
+      {
+        \exp_after:wN \g__changelog_sectioncmd_tl { \g__changelog_title_tl }
+        \exp_after:wN \label { \g__changelog_label_tl }
+      }
+      {}
+  }
 
-\newcommand{\changelog@shortversion@definedate}{%
-	\@ifundefined{cmdKV@version@version}{
-		\@ifundefined{cmdKV@version@date}{
-			\newcommand{\cmdKV@version@version}{\GetTranslation{changelog-Unreleased}}
-			\let\cmdKV@version@date\today
-		}{%
-			\let\cmdKV@version@version\cmdKV@version@date
-			\let\cmdKV@version@date\undefined
-		}%
-	}{}%
-}
+\cs_set:Npn \changelog__short_version_define_date
+  {
+    \tl_if_empty:NT \g__changelog_version_tl
+      {
+        \tl_if_empty:NTF \g__changelog_date_tl
+          {
+            \tl_set:Nn \g__changelog_version_tl { \GetTranslation{changelog-Unreleased} }
+            \tl_set:Nn \g__changelog_date_tl { \today }
+          }
+          {
+            \tl_set_eq:NN \g__changelog_version_tl \g__changelog_date_tl
+          }
+      }
+  }
 
-\newcommand{\changelog@yanked@maybe}
-	{\ifKV@version@yanked\ \changelogyanked\fi}
+\cs_set:Npn \changelog__yanked_maybe
+  {
+    \bool_if:NT \g__changelog_yanked_bool
+      {
+        \ \changelogyanked
+      }
+  }
 
-\newcommand{\changelog@shortversion@item}
-	{\cmdKV@version@version
-	\changelog@yanked@maybe}
+\cs_set:Npn \changelog__short_version_item
+  {
+    \tl_use:N \g__changelog_version_tl
+    \changelog__yanked_maybe
+  }
 
+\cs_set:Npn \changelog__short_version_author_date
+  {
+    \tl_use:N \g__changelog_author_tl
+    \tl_if_empty:NF \g__changelog_date_tl
+      {
+        \tl_if_empty:NF \g__changelog_author_tl
+          { ~ }
+        (\tl_use:N \g__changelog_date_tl)
+      }
+  }
 
-\newcommand{\changelog@shortversion@authordate}{%
-	\@ifundefined{cmdKV@version@author}{}{\cmdKV@version@author}
-	\@ifundefined{cmdKV@version@date}{%
-		% if both undefined, add a linebreak
-		\@ifundefined{cmdKV@version@author}{\hspace{0pt}}{}%
-	}{(\cmdKV@version@date)}%
-}
+\cs_set:Npn \changelog__version_pre
+  {
+    \par
+    \bool_gset_true:N \g__changelog_version_first_bool
+    \changelog__define_section_cmds
+    \bool_if:NT \g__changelog_simple_bool
+      {
+        \begin{changelogitemize}
+      }
+  }
 
-\newcommand{\changelog@version@pre}{%
-	\par
-	\changelog@versionfirsttrue
-	\changelog@sectioncmds
-	\ifKV@version@simple
-		\begin{changelogitemize}
-	\fi
-}
-\newcommand{\changelog@version@post}{%
-	\ifchangelog@versionfirst
-		\ifKV@version@simple
-		\else
-			\PackageError{changelog}{Something's wrong in version environment;
-			perhaps a missing \protect\added, \protect\changed,
-			\protect\deprecated, \protect\removed, \protect\fixed,
-			\protect\security, or \protect\misc}{A version environment needs to
-			introduce its \protect\item-ized lists with one of the provided
-			section commands; maybe you meant to use the [simple] option?}
-		\fi
-	\fi
-	\end{changelogitemize}%
-}
+\cs_set:Npn \changelog__version_post
+  {
+    \bool_if:NT \g__changelog_version_first_bool
+      {
+        \bool_if:NF \g__changelog_simple_bool
+          {
+            \PackageError{changelog}{Something's~wrong~in~version~environment;~
+            perhaps~a~missing~\protect\added,~\protect\changed,~
+            \protect\deprecated,~\protect\removed,~\protect\fixed,~
+            \protect\security,~or~\protect\misc}{A~version environment~needs~to~
+            introduce~its~\protect\item-ized~lists~with~one~of~the~provided~
+            section~commands;~maybe~you~meant~to~use~the~[simple]~option?}
+          }
+      }
+    \end{changelogitemize}
+  }
 
-\newif\ifchangelog@hadversion
+\bool_new:N \g__changelog_seen_version_bool
 \NewDocumentEnvironment{changelog}{o}
-	{\global\changelog@hadversionfalse
-	\IfValueT{#1}{\setkeys{changelog, version}{#1}}%
-	\changelog@section@maybe
-	%\today
-	% version environment; wraps a list
-	\NewDocumentEnvironment{version}{ O{} }%
-		{\setkeys{version}{##1}%
-		\@shortversion
-		\ifKV@version@short
-		\else
-			\changelog@version@pre
-		\fi}
-		{\ifKV@version@short
-		\else
-			\changelog@version@post
-		\fi}%
+  {
+    \bool_gset_false:N \g__changelog_seen_version_bool
+    \IfValueT{#1}{\keys_set:nn{changelog_changelog}{#1}}
+    \changelog__section_maybe
 
-	% doesn't set keys so this can share code with the version
-	% environment
-	\NewDocumentCommand{\@shortversion}{}{%
-		\changelog@shortversion@definedate
-		\global\changelog@hadversiontrue
-		\item[\changelog@shortversion@item]%
-		\changelog@shortversion@authordate
-		\ifKV@version@short
-			\ ---
-			\@ifundefined{cmdKV@version@changes}{}{\cmdKV@version@changes}%
-		\fi
-	}%
+    % Define the version environment, which wraps an `itemize`-style list.
+    \NewDocumentEnvironment{version}{ O{} }
+      {
+        \keys_set:nn { changelog_version } { ##1 }
+        \changelog__short_version
 
-	% short version; "like" a 1-bullet list
-	% extra braces keep command definitions local
-	\NewDocumentCommand{\shortversion}{m}{{%
-		\setkeys{version}{##1, short}%
-		\@shortversion
-	}}%
-	\begin{changelogdescription}}
-	{\ifchangelog@hadversion
-	\else
-		\PackageError{changelog}{No versions in changelog environment body}{A
-		changelog environment must have at least one version or shortversion in
-		it.}%
-	\fi\end{changelogdescription}}
+        \bool_if:NF \g__changelog_short_bool
+          {
+            \changelog__version_pre
+          }
+      }
+      {
+        \bool_if:NF \g__changelog_short_bool
+          {
+            \changelog__version_post
+          }
+      }
+
+    % doesn't set keys so this can share code with the version
+    % environment
+    \cs_set:Npn \changelog__short_version
+      {
+        \changelog__short_version_define_date
+        \bool_gset_true:N \g__changelog_seen_version_bool
+
+        \item[\changelog__short_version_item]
+        \changelog__short_version_author_date
+
+        \bool_if:NT \g__changelog_short_bool
+          {
+            \ ---\ \tl_use:N \g__changelog_changes_tl
+          }
+      }
+
+    % A short version; "like a 1-bullet list.
+    \NewDocumentCommand{\shortversion}{m}
+      % The extra braces here keep the keys we set local.
+      {{
+        \keys_set:nn{changelog_version}{##1, short}
+        \changelog__short_version
+      }}
+
+    \begin{changelogdescription}
+  }
+  {
+    \bool_if:NF \g__changelog_seen_version_bool
+      {
+        \PackageError{changelog}{No~versions~in~changelog~environment~body}{A~
+        changelog~environment~must~have~at~least~one~version~or~shortversion~in~
+        it.}
+      }
+
+    \end{changelogdescription}
+  }

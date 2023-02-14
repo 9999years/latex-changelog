@@ -48,8 +48,10 @@
 
           changelog = let
             name = "changelog";
-            versionSentinel = "\${VERSION}$";
-            version = "2020/08/26 2.4.0";
+            versionSentinel = "[[VERSION]]";
+            version = "2.4.0";
+            dateSentinel = "[[DATE]]";
+            date = "2020/08/26";
           in
             stdenv.mkDerivation {
               name = "latex-${name}";
@@ -106,6 +108,7 @@
               buildPhase = ''
                 # Replace version sentinel.
                 sd --string-mode '${versionSentinel}' '${version}' *.tex *.sty
+                sd --string-mode '${dateSentinel}' '${date}' *.tex *.sty
 
                 # Render PDFs.
                 if [[ -n "$pdf" ]]; then
