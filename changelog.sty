@@ -94,6 +94,28 @@
 \DeclareTranslation{Japanese}{changelog-Unreleased}{未公開}
 \DeclareTranslation{Japanese}{changelog-Yanked}{緊急変更}
 
+\msg_new:nnnn { changelog } { missing_section }
+  {
+    Something's~wrong~in~version~environment;~perhaps~a~missing~
+    \protect\added,~\protect\changed,~\protect\deprecated,~
+    \protect\removed,~\protect\fixed,~\protect\security,~
+    or~\protect\misc?
+  }
+  {
+    A~version~environment~needs~to~introduce~its~
+    \protect\item-ized~lists~with~one~of~the~provided~section~commands;~
+    maybe~you~meant~to~use~the~[simple]~option?
+  }
+
+\msg_new:nnnn { changelog } { missing_version }
+  {
+    No~versions~listed~in~changelog~environment~body.
+  }
+  {
+    A~changelog~environment~must~have~at~least~one~version~environment~or~
+    \protect\shortversion~command~in~it.
+  }
+
 \bool_new:N \g__changelog_version_first_bool
 \cs_set:Npn \changelog__item:n #1
   {
@@ -226,12 +248,7 @@
       {
         \bool_if:NF \g__changelog_simple_bool
           {
-            \PackageError{changelog}{Something's~wrong~in~version~environment;~
-            perhaps~a~missing~\protect\added,~\protect\changed,~
-            \protect\deprecated,~\protect\removed,~\protect\fixed,~
-            \protect\security,~or~\protect\misc}{A~version environment~needs~to~
-            introduce~its~\protect\item-ized~lists~with~one~of~the~provided~
-            section~commands;~maybe~you~meant~to~use~the~[simple]~option?}
+            \msg_error:nn { changelog } { missing_section }
           }
       }
     \end{changelogitemize}
@@ -291,9 +308,7 @@
   {
     \bool_if:NF \g__changelog_seen_version_bool
       {
-        \PackageError{changelog}{No~versions~in~changelog~environment~body}{A~
-        changelog~environment~must~have~at~least~one~version~or~shortversion~in~
-        it.}
+        \msg_error:nn { changelog } { missing_version }
       }
 
     \end{changelogdescription}
