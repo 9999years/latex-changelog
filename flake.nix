@@ -15,12 +15,12 @@
     nixpkgs,
     flake-utils,
     ...
-  } @ attrs:
+  }:
     flake-utils.lib.eachDefaultSystem (
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
-        inherit (pkgs) stdenv lib fetchzip fontconfig;
-      in rec {
+        inherit (pkgs) stdenv fetchzip;
+      in {
         packages = {
           charter = let
             version = "210112";
@@ -91,7 +91,7 @@
 
               # This lets XeLaTeX pick up the font directories.
               # https://github.com/NixOS/nixpkgs/issues/24485#issuecomment-290758573
-              FONTCONFIG_FILE = pkgs.makeFontsConf {fontDirectories = [packages.charter];};
+              FONTCONFIG_FILE = pkgs.makeFontsConf {fontDirectories = [self.packages.${system}.charter];};
 
               pdf = true;
 
@@ -122,25 +122,24 @@
               '';
             };
 
-          changelog-tar = let
-            name = "changelog";
-          in
-            stdenv.mkDerivation {
-              name = "${packages.changelog.name}.tar.gz";
-              version = packages.changelog.version;
+          changelog-tar = stdenv.mkDerivation {
+            name = "${self.packages.${system}.changelog.name}.tar.gz";
+            version = self.packages.${system}.changelog.version;
 
-              src = packages.changelog;
+            src = self.packages.${system}.changelog;
 
-              phases = "unpackPhase installPhase";
+            phases = "unpackPhase installPhase";
 
-              installPhase = ''
-                tar -cvf $out *
-                tar -tvf $out
-              '';
-            };
+            installPhase = ''
+              tar -cvf $out *
+              tar -tvf $out
+            '';
+          };
 
-          default = packages.changelog-tar;
+          default = self.packages.${system}.changelog-tar;
         };
+
+        checks = self.packages.${system};
 
         devShells = {
           changelog = pkgs.mkShell {
@@ -149,12 +148,12 @@
               pkgs.texlab # TeX language server
             ];
             inputsFrom = [
-              packages.changelog
+              self.packages.${system}.changelog
             ];
-            FONTCONFIG_FILE = pkgs.makeFontsConf {fontDirectories = [packages.charter];};
+            FONTCONFIG_FILE = pkgs.makeFontsConf {fontDirectories = [self.packages.${system}.charter];};
           };
 
-          default = devShells.changelog;
+          default = self.devShells.${system}.changelog;
         };
       }
     );
