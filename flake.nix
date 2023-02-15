@@ -37,11 +37,17 @@
 
               phases = "unpackPhase installPhase";
 
+              # WOFF2 fonts seem to cause problems on Linux; disable them by
+              # default.
+              enableWoff2 = false;
+
               installPhase = ''
                 mkdir -p $out/share/fonts
                 mv "OTF format (best for Mac OS)/Charter" $out/share/fonts/opentype
                 mv "TTF format (best for Windows)/Charter" $out/share/fonts/truetype
-                mv "WOFF2 format (best for web)/Charter" $out/share/fonts/woff
+                if [[ -n "$enableWoff2" ]]; then
+                  mv "WOFF2 format (best for web)/Charter" $out/share/fonts/woff
+                fi
                 mv "Charter license.txt" $out/LICENSE.txt
               '';
             };
