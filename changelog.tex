@@ -30,7 +30,7 @@
 
 \author{Rebecca Turner\thanks{\email{rbt@sent.as}}}
 \title{The \cl\ Package}
-\date{${VERSION}$}
+\date{[[VERSION]] ([[DATE]])}
 \begin{document}
 \maketitle
 
@@ -320,6 +320,13 @@ an email} and I'll incorporate the translation into \cl's next release!
 This is this package's actual changelog --- not an example!
 
 \begin{changelog}[author=Rebecca Turner <\email{rbt@sent.as}>, section=false]
+\begin{version}[v=2.4.1, date=2023-02-14]
+\changed
+	\item Converted the |changelog.sty| implementation to use the \ctan{expl3}
+		package. \ctan{expl3} provides a reasonable and well-defined programming
+		environment. I believe \ctan{expl3} is the future of programming in
+		\LaTeX, despite its verbosity.
+\end{version}
 \begin{version}[v=2.4.0, date=2020-09-02,
 	author={cmplstofB <\https{github.com/cmplstofB}>}]
 \added

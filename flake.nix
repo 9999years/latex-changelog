@@ -15,12 +15,12 @@
     nixpkgs,
     flake-utils,
     ...
-  } @ attrs:
+  }:
     flake-utils.lib.eachDefaultSystem (
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
-        inherit (pkgs) stdenv lib fetchzip fontconfig;
-      in rec {
+        inherit (pkgs) stdenv fetchzip;
+      in {
         packages = {
           charter = let
             version = "210112";
@@ -37,19 +37,27 @@
 
               phases = "unpackPhase installPhase";
 
+              # WOFF2 fonts seem to cause problems on Linux; disable them by
+              # default.
+              enableWoff2 = false;
+
               installPhase = ''
                 mkdir -p $out/share/fonts
                 mv "OTF format (best for Mac OS)/Charter" $out/share/fonts/opentype
                 mv "TTF format (best for Windows)/Charter" $out/share/fonts/truetype
-                mv "WOFF2 format (best for web)/Charter" $out/share/fonts/woff
+                if [[ -n "$enableWoff2" ]]; then
+                  mv "WOFF2 format (best for web)/Charter" $out/share/fonts/woff
+                fi
                 mv "Charter license.txt" $out/LICENSE.txt
               '';
             };
 
           changelog = let
             name = "changelog";
-            versionSentinel = "\${VERSION}$";
-            version = "2020/08/26 2.4.0";
+            versionSentinel = "[[VERSION]]";
+            version = "2.4.1";
+            dateSentinel = "[[DATE]]";
+            date = "2023/02/14";
           in
             stdenv.mkDerivation {
               name = "latex-${name}";
@@ -89,7 +97,7 @@
 
               # This lets XeLaTeX pick up the font directories.
               # https://github.com/NixOS/nixpkgs/issues/24485#issuecomment-290758573
-              FONTCONFIG_FILE = pkgs.makeFontsConf {fontDirectories = [packages.charter];};
+              FONTCONFIG_FILE = pkgs.makeFontsConf {fontDirectories = [self.packages.${system}.charter];};
 
               pdf = true;
 
@@ -106,6 +114,7 @@
               buildPhase = ''
                 # Replace version sentinel.
                 sd --string-mode '${versionSentinel}' '${version}' *.tex *.sty
+                sd --string-mode '${dateSentinel}' '${date}' *.tex *.sty
 
                 # Render PDFs.
                 if [[ -n "$pdf" ]]; then
@@ -119,37 +128,38 @@
               '';
             };
 
-          changelog-tar = let
-            name = "changelog";
-          in
-            stdenv.mkDerivation {
-              name = "${packages.changelog.name}.tar.gz";
-              version = packages.changelog.version;
+          changelog-tar = stdenv.mkDerivation {
+            name = "${self.packages.${system}.changelog.name}.tar.gz";
+            version = self.packages.${system}.changelog.version;
 
-              src = packages.changelog;
+            src = self.packages.${system}.changelog;
 
-              phases = "unpackPhase installPhase";
+            phases = "unpackPhase installPhase";
 
-              installPhase = ''
-                tar -cvf $out *
-                tar -tvf $out
-              '';
-            };
+            installPhase = ''
+              tar -cvf $out *
+              tar -tvf $out
+            '';
+          };
 
-          default = packages.changelog-tar;
+          default = self.packages.${system}.changelog-tar;
         };
+
+        checks = self.packages.${system};
 
         devShells = {
           changelog = pkgs.mkShell {
             name = "latex-changelog";
-            packages = [];
-            inputsFrom = [
-              packages.changelog
+            packages = [
+              pkgs.texlab # TeX language server
             ];
-            FONTCONFIG_FILE = pkgs.makeFontsConf {fontDirectories = [packages.charter];};
+            inputsFrom = [
+              self.packages.${system}.changelog
+            ];
+            FONTCONFIG_FILE = pkgs.makeFontsConf {fontDirectories = [self.packages.${system}.charter];};
           };
 
-          default = devShells.changelog;
+          default = self.devShells.${system}.changelog;
         };
       }
     );
