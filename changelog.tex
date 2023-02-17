@@ -228,6 +228,21 @@ the \option{simple} option!
 \begin{desc}|\security|\end{desc}Introduces a list of \cs{item}s that represent
 	security-fixes and closed security holes
 
+\begin{desc}|\newchangelogsection{<command>}{<description>}|\end{desc}
+	Creates a new command like \cs{added}, \cs{changed}, etc., that can be
+	used in the |version| environment.
+
+\begin{LTXexample}
+\newchangelogsection
+  {\critical}{Critical}
+\begin{changelog}[section=false]
+  \begin{version}[v=1.0.0, date=2023-02-16]
+    \critical
+      \item Features!
+  \end{version}
+\end{changelog}
+\end{LTXexample}
+
 \subsection{Customization}
 
 The |changelog| environment wraps |changelogdescription| (which is
@@ -320,6 +335,11 @@ an email} and I'll incorporate the translation into \cl's next release!
 This is this package's actual changelog --- not an example!
 
 \begin{changelog}[author=Rebecca Turner <\email{rbt@sent.as}>, section=false]
+\begin{version}[v=2.5.0, date=2023-02-16]
+\added
+    \item Added the \cs{newchangelogsection} command to support custom
+        sections.
+\end{version}
 \begin{version}[v=2.4.1, date=2023-02-14]
 \changed
 	\item Converted the |changelog.sty| implementation to use the \ctan{expl3}

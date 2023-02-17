@@ -136,6 +136,7 @@
     \fbox{\textbf{\GetTranslation{changelog-Yanked}}}
   }
 
+\tl_new:N \g__changelog_extra_section_cmds
 \cs_set:Npn \changelog__define_section_cmds
   {
     \cs_set:Npn \added      {\changelog__item:n{\GetTranslation{changelog-Added}}}
@@ -145,8 +146,19 @@
     \cs_set:Npn \fixed      {\changelog__item:n{\GetTranslation{changelog-Fixed}}}
     \cs_set:Npn \security   {\changelog__item:n{\GetTranslation{changelog-Security}}}
     \cs_set:Npn \misc       {\changelog__item:n{\GetTranslation{changelog-Miscellaneous}}}
+    \tl_use:N \g__changelog_extra_section_cmds
   }
 
+\NewDocumentCommand{\newchangelogsection}{m m}
+  {
+    \tl_gput_right:Nn \g__changelog_extra_section_cmds
+      {
+        \cs_set:Npn #1
+          {
+            \changelog__item:n { #2 }
+          }
+      }
+  }
 
 \keys_define:nn { changelog_version }
   {

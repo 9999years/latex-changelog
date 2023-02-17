@@ -1,10 +1,13 @@
 \documentclass{article}
 \usepackage{changelog}
+\newchangelogsection{\critical}{Critical}
 \begin{document}
 \begin{changelog}[author=Rebecca Turner,
 	sectioncmd=\subsection,
 	title=Example changelog]
 \begin{version}
+\critical
+	\item A critical new feature
 \added
 	\item Really cool features
 \end{version}
