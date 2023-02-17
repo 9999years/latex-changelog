@@ -131,9 +131,14 @@
     \begin{changelogitemize}
   }
 
+\cs_set:Npn \changelogremark #1
+  {
+    \fbox{\textbf{#1}}
+  }
+
 \cs_set:Npn \changelogyanked
   {
-    \fbox{\textbf{\GetTranslation{changelog-Yanked}}}
+    \changelogremark{\GetTranslation{changelog-Yanked}}
   }
 
 \tl_new:N \g__changelog_extra_section_cmds
@@ -162,14 +167,16 @@
 
 \keys_define:nn { changelog_version }
   {
-    author  .tl_set:N   = \g__changelog_author_tl ,
-    v       .tl_set:N   = \g__changelog_version_tl ,
-    version .tl_set:N   = \g__changelog_version_tl ,
-    date    .tl_set:N   = \g__changelog_date_tl ,
-    changes .tl_set:N   = \g__changelog_changes_tl ,
-    yanked  .bool_set:N = \g__changelog_yanked_bool ,
-    simple  .bool_set:N = \g__changelog_simple_bool ,
-    short   .bool_set:N = \g__changelog_short_bool ,
+    author  .tl_set:N    = \g__changelog_author_tl ,
+    v       .tl_set:N    = \g__changelog_version_tl ,
+    version .tl_set:N    = \g__changelog_version_tl ,
+    date    .tl_set:N    = \g__changelog_date_tl ,
+    changes .tl_set:N    = \g__changelog_changes_tl ,
+    yanked  .bool_set:N  = \g__changelog_yanked_bool ,
+    simple  .bool_set:N  = \g__changelog_simple_bool ,
+    short   .bool_set:N  = \g__changelog_short_bool ,
+    remark  .tl_set:N    = \g__changelog_remark_tl ,
+    remarks .clist_set:N = \g__changelog_remarks_clist ,
   }
 
 \keys_define:nn { changelog_changelog }
@@ -218,18 +225,24 @@
       }
   }
 
-\cs_set:Npn \changelog__yanked_maybe
+\cs_set:Npn \changelog__short_version_item
   {
+    \tl_use:N \g__changelog_version_tl
     \bool_if:NT \g__changelog_yanked_bool
       {
         \ \changelogyanked
       }
-  }
-
-\cs_set:Npn \changelog__short_version_item
-  {
-    \tl_use:N \g__changelog_version_tl
-    \changelog__yanked_maybe
+    \tl_if_empty:NF \g__changelog_remark_tl
+      {
+        \ \changelogremark{\tl_use:N \g__changelog_remark_tl}
+      }
+    \clist_if_empty:NF \g__changelog_remarks_clist
+      {
+        \clist_map_variable:NNn \g__changelog_remarks_clist \l__changelog_remark_tl
+          {
+            \ \changelogremark{\tl_use:N \l__changelog_remark_tl}
+          }
+      }
   }
 
 \cs_set:Npn \changelog__short_version_author_date

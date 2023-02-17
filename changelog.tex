@@ -152,6 +152,7 @@ versions have the same author.
 		What to \cs{label} the section?
 \end{keys}
 
+\pagebreak
 \begin{desc}
 |\begin{version}[<options>]...\end{version}|
 \end{desc}
@@ -185,6 +186,10 @@ of the other solutions here.}}
 	\key{yanked}[\bool][false]
 		Indicates that the release was revoked due to a ``serious bug or
 		security issue''; prints a visible notice next to the version number
+	\key{remark}[\m{remark}]
+		Adds a remark in the style of the |yanked| key.
+	\key{remarks}[\m{comma-separated list of remarks}]
+		Adds multiple remarks in the style of the |yanked| key.
 	\key{simple}[\bool][false]
 		Indicates this version isn't split up into \cs{added}, \cs{changed},
 		etc.\ categories; if this option is given, a |version| environment acts
@@ -265,6 +270,12 @@ Prints the ``revoked release'' notice:
 \href{https://keepachangelog.com/en/1.0.0/#yanked}{yanked releases on
 \texttt{keepachangelog.com}}.
 
+\begin{desc}
+|\changelogremark{<remark>}|
+\end{desc}
+Prints a ``remark.'' This is used to implement |\changelogyanked| and the
+|remark| and |remarks| keys of the |version| environment.
+
 \section{Translations}
 
 Want to use \cl\ in a non-English document? Great! \cl\ comes with
@@ -339,6 +350,10 @@ This is this package's actual changelog --- not an example!
 \added
     \item Added the \cs{newchangelogsection} command to support custom
         sections.
+	\item Added the |remark| and |remarks| keys to support custom remarks (like
+		``YANKED'') on versions.
+	\item Added the |\changelogremark| command, which renders the ``YANKED''
+		remark and other custom remarks.
 \end{version}
 \begin{version}[v=2.4.1, date=2023-02-14]
 \changed
