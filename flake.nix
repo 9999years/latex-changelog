@@ -137,8 +137,8 @@
             phases = "unpackPhase installPhase";
 
             installPhase = ''
-              tar -cvjf $out *
-              tar -tvf $out
+              tar --create --gzip --file $out *
+              tar --verbose --list --file $out
             '';
           };
 
