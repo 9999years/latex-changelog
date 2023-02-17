@@ -2,11 +2,20 @@
 
 [Available on CTAN as `changelog`][changelog]
 
-Changelogs are important. Unfortunately, there are few facilities
-for typesetting changelogs in LaTeX. `changelog` defines a `changelog`
+Changelogs are important. The `changelog` package defines a `changelog`
 environment to make changelogs simple and intuitive.
 
 Inspired by [keepachangelog.com].
+
+```latex
+\begin{changelog}[author=Rebecca Turner, simple, sectioncmd=\section*]
+\begin{version}[v=1.0.0, date=2018-12-28]
+  \item Cool features
+  \item Bug fixes
+\end{version}
+\shortversion{v=0.1.0, date=2018-10-25, changes=Initial beta}
+\end{changelog}
+```
 
 File                         | Description
 -----------------------------|-------------------------------
