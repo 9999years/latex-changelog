@@ -210,24 +210,28 @@
       {}
   }
 
-\cs_set:Npn \changelog__short_version_define_date
+% Display the current version, which may be a version number, a date, or "Unreleased".
+\cs_set:Npn \changelog__display_version
   {
-    \tl_if_empty:NT \g__changelog_version_tl
+    \tl_if_empty:NTF \g__changelog_version_tl
       {
         \tl_if_empty:NTF \g__changelog_date_tl
           {
-            \tl_set:Nn \g__changelog_version_tl { \GetTranslation{changelog-Unreleased} }
+            \GetTranslation{changelog-Unreleased}
             \tl_set:Nn \g__changelog_date_tl { \today }
           }
           {
-            \tl_set_eq:NN \g__changelog_version_tl \g__changelog_date_tl
+            \tl_use:N \g__changelog_date_tl
           }
+      }
+      {
+        \tl_use:N \g__changelog_version_tl
       }
   }
 
 \cs_set:Npn \changelog__short_version_item
   {
-    \tl_use:N \g__changelog_version_tl
+    \changelog__display_version
     \bool_if:NT \g__changelog_yanked_bool
       {
         \ \changelogyanked
@@ -247,12 +251,21 @@
 
 \cs_set:Npn \changelog__short_version_author_date
   {
+    % This might output nothing if there's no author and the date is being used
+    % as a version number, so make sure to `\leavevmode` to avoid a weird
+    % indent at the start of the item.
+    \mode_leave_vertical:
     \tl_use:N \g__changelog_author_tl
     \tl_if_empty:NF \g__changelog_date_tl
       {
-        \tl_if_empty:NF \g__changelog_author_tl
-          { ~ }
-        (\tl_use:N \g__changelog_date_tl)
+        % If no version number is given, the date is used instead, so we don't
+        % want to show the date twice.
+        \tl_if_empty:NF \g__changelog_version_tl
+          {
+            \tl_if_empty:NF \g__changelog_author_tl
+              { ~ }
+            (\tl_use:N \g__changelog_date_tl)
+          }
       }
   }
 
@@ -308,7 +321,6 @@
     % environment
     \cs_set:Npn \changelog__short_version
       {
-        \changelog__short_version_define_date
         \bool_gset_true:N \g__changelog_seen_version_bool
 
         \item[\changelog__short_version_item]

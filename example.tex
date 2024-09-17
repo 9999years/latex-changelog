@@ -7,17 +7,28 @@
 	title=Example changelog]
 \begin{version}
 \critical
-	\item A critical new feature
+	\item A critical new feature.
 \added
-	\item Really cool features
+	\item Really cool feature.
+	\item A second feature.
 \end{version}
 
 \begin{version}[date=2019-01-23, short]
-	A version with only a date
+	A version with only a date.
+\end{version}
+
+\begin{version}[date=2019-01-23]
+\added
+	\item A ``full'' version with only a date.
 \end{version}
 
 \begin{version}[v=1.1.0, simple]
-	\item A version with no date
+	\item A version with no date.
+\end{version}
+
+\begin{version}[v=1.1.0, author=]
+\added
+	\item A version with no date or author.
 \end{version}
 
 \begin{version}[v=1.0.3, remark=Remark, simple]
@@ -29,24 +40,24 @@
 \end{version}
 
 \begin{version}[v=1.0.1, yanked, simple]
-	\item A version with a terrible bug
+	\item A version with a terrible bug.
 \end{version}
 
 \begin{version}[v=1.0.0, date=2018-10-26]
 \added
-	\item A cool feature
+	\item A cool feature.
 \changed
-	\item Some \textsc{api} detail
+	\item Some \textsc{api} detail.
 \deprecated
-	\item Something that was a bad idea in the first place
+	\item Something that was a bad idea in the first place.
 \removed
-	\item Something that was deprecated 3 versions ago
+	\item Something that was deprecated 3 versions ago.
 \fixed
-	\item A bug that would delete files instead of saving them
+	\item A bug that would delete files instead of saving them.
 \security
-	\item improved with addition of buffer bound checks
+	\item improved with addition of buffer bound checks.
 \misc
-	\item A change that doesn't fit into any other category
+	\item A change that doesn't fit into any other category.
 \end{version}
 
 \shortversion{v=0.1.0, date=2018-10-19,
