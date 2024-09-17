@@ -347,9 +347,10 @@ This is this package's actual changelog --- not an example!
 \begin{changelog}[author=Rebecca Turner <\email{rbt@sent.as}>, section=false]
 \begin{version}[v=2.5.1, date=2024-09-17]
 \fixed
-	\item Fixed a bug in 2.4.1 and 2.5.0 where a version with a date and no
-		version number would display the date twice, like ``\textbf{2024-09-17}
-		(2024-09-17)''. Now, the date will correctly only be shown once.
+	\item Fixed \href{https://github.com/9999years/latex-changelog/issues/13}{a
+		bug where a version with a date and no version number would display the
+		date twice}, like ``\textbf{2024-09-17} (2024-09-17)''. Now, the date will
+		correctly only be shown once.
 
 	\item Fixed a bug where a version with a version number but no date or author
 		would be indented.
