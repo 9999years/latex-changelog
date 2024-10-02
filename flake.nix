@@ -128,6 +128,10 @@
               '';
             };
 
+          changelog-no-pdf = self.packages.${system}.changelog.overrideAttrs (_prev: {
+            pdf = false;
+          });
+
           changelog-tar = stdenv.mkDerivation {
             name = "${self.packages.${system}.changelog.name}.tar.gz";
             version = self.packages.${system}.changelog.version;
@@ -152,6 +156,7 @@
             name = "latex-changelog";
             packages = [
               pkgs.texlab # TeX language server
+              pkgs.just # Command runner
             ];
             inputsFrom = [
               self.packages.${system}.changelog

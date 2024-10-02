@@ -1,8 +1,8 @@
 tar:
-	nix-build -A tar --out-link changelog.tar.gz
+    nix build
 
 dir:
-	nix-build -A dir --out-link changelog
+    nix build .#changelog
 
-dir-pdf:
-	nix-build -A dir-pdf --out-link changelog
+dir-no-pdf:
+    nix build .#changelog-no-pdf
