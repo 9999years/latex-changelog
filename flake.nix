@@ -10,21 +10,25 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    flake-utils,
-    ...
-  }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+      ...
+    }:
     flake-utils.lib.eachDefaultSystem (
-      system: let
+      system:
+      let
         pkgs = nixpkgs.legacyPackages.${system};
         inherit (pkgs) stdenv fetchzip;
-      in {
+      in
+      {
         packages = {
-          charter = let
-            version = "210112";
-          in
+          charter =
+            let
+              version = "210112";
+            in
             stdenv.mkDerivation {
               pname = "charter";
               inherit version;
@@ -52,13 +56,14 @@
               '';
             };
 
-          changelog = let
-            name = "changelog";
-            versionSentinel = "[[VERSION]]";
-            version = "2.5.1";
-            dateSentinel = "[[DATE]]";
-            date = "2024/09/17";
-          in
+          changelog =
+            let
+              name = "changelog";
+              versionSentinel = "[[VERSION]]";
+              version = "2.5.1";
+              dateSentinel = "[[DATE]]";
+              date = "2024/09/17";
+            in
             stdenv.mkDerivation {
               name = "latex-${name}";
               inherit version;
@@ -70,8 +75,7 @@
                 # this is only like 0.4GB. I guess it is worth enumerating the
                 # packages manually.
                 (pkgs.texlive.combine {
-                  inherit
-                    (pkgs.texlive)
+                  inherit (pkgs.texlive)
                     scheme-small
                     collection-xetex
                     latexmk
@@ -97,7 +101,7 @@
 
               # This lets XeLaTeX pick up the font directories.
               # https://github.com/NixOS/nixpkgs/issues/24485#issuecomment-290758573
-              FONTCONFIG_FILE = pkgs.makeFontsConf {fontDirectories = [self.packages.${system}.charter];};
+              FONTCONFIG_FILE = pkgs.makeFontsConf { fontDirectories = [ self.packages.${system}.charter ]; };
 
               pdf = true;
 
@@ -161,7 +165,7 @@
             inputsFrom = [
               self.packages.${system}.changelog
             ];
-            FONTCONFIG_FILE = pkgs.makeFontsConf {fontDirectories = [self.packages.${system}.charter];};
+            FONTCONFIG_FILE = pkgs.makeFontsConf { fontDirectories = [ self.packages.${system}.charter ]; };
           };
 
           default = self.devShells.${system}.changelog;
