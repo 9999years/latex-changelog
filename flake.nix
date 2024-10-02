@@ -106,23 +106,26 @@
               pdf = true;
 
               distSrcs = [
-                "changelog.sty"
-                "changelog.tex"
-                "example.tex"
                 "LICENSE.txt"
                 "README.md"
                 "screenshot.png"
-                "*.pdf"
+                "src/*.pdf"
+                "src/changelog.sty"
+                "src/changelog.tex"
+                "src/example.tex"
               ];
 
               buildPhase = ''
                 # Replace version sentinel.
-                sd --string-mode '${versionSentinel}' '${version}' *.tex *.sty
-                sd --string-mode '${dateSentinel}' '${date}' *.tex *.sty
+                sd --string-mode '${versionSentinel}' '${version}' src/*.tex src/*.sty
+                sd --string-mode '${dateSentinel}' '${date}' src/*.tex src/*.sty
 
                 # Render PDFs.
                 if [[ -n "$pdf" ]]; then
-                  latexmk -pdf -r ./latexmkrc -pvc- -pv- *.tex
+                  latexmk \
+                    -r ./latexmkrc \
+                    -pvc- -pv- \
+                    src/*.tex
                 fi
               '';
 
