@@ -204,8 +204,8 @@
   {
     \bool_if:NTF \l__changelog_section_bool
       {
-        \exp_after:wN \l__changelog_sectioncmd_tl { \l__changelog_title_tl }
-        \exp_after:wN \label { \l__changelog_label_tl }
+        \exp_after:wN \l__changelog_sectioncmd_tl { \tl_use:N \l__changelog_title_tl }
+        \exp_after:wN \label { \tl_use:N \l__changelog_label_tl }
       }
       {}
   }
