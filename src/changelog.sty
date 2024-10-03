@@ -293,6 +293,7 @@
   }
 
 \bool_new:N \g__changelog_seen_version_bool
+\tl_new:N \g__changelog_last_version_tl
 \NewDocumentEnvironment{changelog}{o}
   {
     \bool_gset_false:N \g__changelog_seen_version_bool
@@ -303,6 +304,12 @@
     \NewDocumentEnvironment{version}{ O{} }
       {
         \keys_set:nn { changelog_version } { ##1 }
+        \tl_gset:Nx
+            \g__changelog_last_version_tl
+            {
+              \changelog__display_version
+            }
+
         \changelog__short_version
 
         \bool_if:NF \l__changelog_short_bool
