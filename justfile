@@ -9,7 +9,7 @@ dir-no-pdf:
     nix build .#changelog-no-pdf --out-link changelog
 
 clean:
-    latexmk -pvc -C
+    latexmk -pvc- -C src/*.tex
 
 watch:
     latexmk -pvc src/changelog.tex
