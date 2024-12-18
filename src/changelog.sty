@@ -116,13 +116,13 @@
     \protect\shortversion~command~in~it.
   }
 
-\bool_new:N \g__changelog_version_first_bool
+\bool_new:N \l__changelog_version_first_bool
 \cs_set:Npn \changelog__item:n #1
   {
     \noindent
-    \bool_if:NTF \g__changelog_version_first_bool
+    \bool_if:NTF \l__changelog_version_first_bool
       {
-        \bool_gset_false:N \g__changelog_version_first_bool
+        \bool_set_false:N \l__changelog_version_first_bool
       }
       {
         \end{changelogitemize}
@@ -167,27 +167,27 @@
 
 \keys_define:nn { changelog_version }
   {
-    author  .tl_set:N    = \g__changelog_author_tl ,
-    v       .tl_set:N    = \g__changelog_version_tl ,
-    version .tl_set:N    = \g__changelog_version_tl ,
-    date    .tl_set:N    = \g__changelog_date_tl ,
-    changes .tl_set:N    = \g__changelog_changes_tl ,
-    yanked  .bool_set:N  = \g__changelog_yanked_bool ,
-    simple  .bool_set:N  = \g__changelog_simple_bool ,
-    short   .bool_set:N  = \g__changelog_short_bool ,
-    remark  .tl_set:N    = \g__changelog_remark_tl ,
-    remarks .clist_set:N = \g__changelog_remarks_clist ,
+    author  .tl_set:N    = \l__changelog_author_tl ,
+    v       .tl_set:N    = \l__changelog_version_tl ,
+    version .tl_set:N    = \l__changelog_version_tl ,
+    date    .tl_set:N    = \l__changelog_date_tl ,
+    changes .tl_set:N    = \l__changelog_changes_tl ,
+    yanked  .bool_set:N  = \l__changelog_yanked_bool ,
+    simple  .bool_set:N  = \l__changelog_simple_bool ,
+    short   .bool_set:N  = \l__changelog_short_bool ,
+    remark  .tl_set:N    = \l__changelog_remark_tl ,
+    remarks .clist_set:N = \l__changelog_remarks_clist ,
   }
 
 \keys_define:nn { changelog_changelog }
   {
-    sectioncmd .tl_set:N    = \g__changelog_sectioncmd_tl ,
+    sectioncmd .tl_set:N    = \l__changelog_sectioncmd_tl ,
     sectioncmd .initial:n   = \section ,
-    title      .tl_set:N    = \g__changelog_title_tl ,
+    title      .tl_set:N    = \l__changelog_title_tl ,
     title      .initial:n   = \GetTranslation{changelog} ,
-    label      .tl_set:N    = \g__changelog_label_tl ,
+    label      .tl_set:N    = \l__changelog_label_tl ,
     label      .initial:n   = sec:changelog ,
-    section    .bool_gset:N = \g__changelog_section_bool ,
+    section    .bool_set:N = \l__changelog_section_bool ,
     section    .initial:n   = true ,
   }
 
@@ -202,10 +202,10 @@
 
 \cs_set:Npn \changelog__section_maybe
   {
-    \bool_if:NTF \g__changelog_section_bool
+    \bool_if:NTF \l__changelog_section_bool
       {
-        \exp_after:wN \g__changelog_sectioncmd_tl { \g__changelog_title_tl }
-        \exp_after:wN \label { \g__changelog_label_tl }
+        \exp_after:wN \l__changelog_sectioncmd_tl { \l__changelog_title_tl }
+        \exp_after:wN \label { \l__changelog_label_tl }
       }
       {}
   }
@@ -213,36 +213,36 @@
 % Display the current version, which may be a version number, a date, or "Unreleased".
 \cs_set:Npn \changelog__display_version
   {
-    \tl_if_empty:NTF \g__changelog_version_tl
+    \tl_if_empty:NTF \l__changelog_version_tl
       {
-        \tl_if_empty:NTF \g__changelog_date_tl
+        \tl_if_empty:NTF \l__changelog_date_tl
           {
             \GetTranslation{changelog-Unreleased}
-            \tl_set:Nn \g__changelog_date_tl { \today }
+            \tl_set:Nn \l__changelog_date_tl { \today }
           }
           {
-            \tl_use:N \g__changelog_date_tl
+            \tl_use:N \l__changelog_date_tl
           }
       }
       {
-        \tl_use:N \g__changelog_version_tl
+        \tl_use:N \l__changelog_version_tl
       }
   }
 
 \cs_set:Npn \changelog__short_version_item
   {
     \changelog__display_version
-    \bool_if:NT \g__changelog_yanked_bool
+    \bool_if:NT \l__changelog_yanked_bool
       {
         \ \changelogyanked
       }
-    \tl_if_empty:NF \g__changelog_remark_tl
+    \tl_if_empty:NF \l__changelog_remark_tl
       {
-        \ \changelogremark{\tl_use:N \g__changelog_remark_tl}
+        \ \changelogremark{\tl_use:N \l__changelog_remark_tl}
       }
-    \clist_if_empty:NF \g__changelog_remarks_clist
+    \clist_if_empty:NF \l__changelog_remarks_clist
       {
-        \clist_map_variable:NNn \g__changelog_remarks_clist \l__changelog_remark_tl
+        \clist_map_variable:NNn \l__changelog_remarks_clist \l__changelog_remark_tl
           {
             \ \changelogremark{\tl_use:N \l__changelog_remark_tl}
           }
@@ -255,16 +255,16 @@
     % as a version number, so make sure to `\leavevmode` to avoid a weird
     % indent at the start of the item.
     \mode_leave_vertical:
-    \tl_use:N \g__changelog_author_tl
-    \tl_if_empty:NF \g__changelog_date_tl
+    \tl_use:N \l__changelog_author_tl
+    \tl_if_empty:NF \l__changelog_date_tl
       {
         % If no version number is given, the date is used instead, so we don't
         % want to show the date twice.
-        \tl_if_empty:NF \g__changelog_version_tl
+        \tl_if_empty:NF \l__changelog_version_tl
           {
-            \tl_if_empty:NF \g__changelog_author_tl
+            \tl_if_empty:NF \l__changelog_author_tl
               { ~ }
-            (\tl_use:N \g__changelog_date_tl)
+            (\tl_use:N \l__changelog_date_tl)
           }
       }
   }
@@ -272,9 +272,9 @@
 \cs_set:Npn \changelog__version_pre
   {
     \par
-    \bool_gset_true:N \g__changelog_version_first_bool
+    \bool_set_true:N \l__changelog_version_first_bool
     \changelog__define_section_cmds
-    \bool_if:NT \g__changelog_simple_bool
+    \bool_if:NT \l__changelog_simple_bool
       {
         \begin{changelogitemize}
       }
@@ -282,9 +282,9 @@
 
 \cs_set:Npn \changelog__version_post
   {
-    \bool_if:NT \g__changelog_version_first_bool
+    \bool_if:NT \l__changelog_version_first_bool
       {
-        \bool_if:NF \g__changelog_simple_bool
+        \bool_if:NF \l__changelog_simple_bool
           {
             \msg_error:nn { changelog } { missing_section }
           }
@@ -293,6 +293,7 @@
   }
 
 \bool_new:N \g__changelog_seen_version_bool
+\tl_new:N \g__changelog_last_version_tl
 \NewDocumentEnvironment{changelog}{o}
   {
     \bool_gset_false:N \g__changelog_seen_version_bool
@@ -303,15 +304,21 @@
     \NewDocumentEnvironment{version}{ O{} }
       {
         \keys_set:nn { changelog_version } { ##1 }
+        \tl_gset:Nx
+            \g__changelog_last_version_tl
+            {
+              \changelog__display_version
+            }
+
         \changelog__short_version
 
-        \bool_if:NF \g__changelog_short_bool
+        \bool_if:NF \l__changelog_short_bool
           {
             \changelog__version_pre
           }
       }
       {
-        \bool_if:NF \g__changelog_short_bool
+        \bool_if:NF \l__changelog_short_bool
           {
             \changelog__version_post
           }
@@ -326,9 +333,9 @@
         \item[\changelog__short_version_item]
         \changelog__short_version_author_date
 
-        \bool_if:NT \g__changelog_short_bool
+        \bool_if:NT \l__changelog_short_bool
           {
-            \ ---\ \tl_use:N \g__changelog_changes_tl
+            \ ---\ \tl_use:N \l__changelog_changes_tl
           }
       }
 

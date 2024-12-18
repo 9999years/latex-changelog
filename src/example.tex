@@ -1,5 +1,10 @@
 \documentclass{article}
+\usepackage{fancyhdr}
 \usepackage{changelog}
+\ExplSyntaxOn
+\chead{\tl_use:N \g__changelog_last_version_tl}
+\ExplSyntaxOff
+\pagestyle{fancy}
 \newchangelogsection{\critical}{Critical}
 \begin{document}
 \begin{changelog}[author=Rebecca Turner,
@@ -63,4 +68,9 @@
 \shortversion{v=0.1.0, date=2018-10-19,
 	changes=Initial beta.}
 \end{changelog}
+
+\subsection{Notes}
+
+See the changelogs in section~\ref{sec:changelog}.
+
 \end{document}
