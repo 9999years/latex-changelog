@@ -143,12 +143,15 @@ versions have the same author.
 \begin{keys}
 	\key{section}[\bool][true]
 		Insert a \cs{section} before the changelog?
+		If |section=false|, no \cs{label} will be generated.
 	\key{sectioncmd}[\m{command}][\cs{section}]
 		Which sectioning command to use?
 	\key{title}[\m{txt}][Changelog]
 		What to title the changelog section?
 	\key{label}[\m{label}][sec:changelog]
 		What to \cs{label} the section?
+		If the \option{label} option is empty (|label=|), no label will be
+		inserted.
 \end{keys}
 
 \pagebreak
@@ -345,6 +348,16 @@ an email} and I'll incorporate the translation into \cl's next release!
 This is this package's actual changelog --- not an example!
 
 \begin{changelog}[author=Rebecca Turner <\email{rbt@sent.as}>, section=false]
+\begin{version}[v=2.6.0, date=2024-12-18]
+\changed
+	\item If the \option{label} option for the |changelog| environment is empty,
+		no \cs{label} will be generated for the changelog section. 
+
+		The documentation has been clarified to explain that if the
+		\option{section} option is set to |false|, no label will be generated, as
+		labels are meaningless without being attached to a section.
+\end{version}
+
 \begin{version}[v=2.5.1, date=2024-09-17]
 \fixed
 	\item Fixed \href{https://github.com/9999years/latex-changelog/issues/13}{a
