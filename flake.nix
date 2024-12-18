@@ -60,9 +60,9 @@
             let
               name = "changelog";
               versionSentinel = "[[VERSION]]";
-              version = "2.5.1";
+              version = "2.6.0";
               dateSentinel = "[[DATE]]";
-              date = "2024/09/17";
+              date = "2024/12/18";
             in
             stdenv.mkDerivation {
               name = "latex-${name}";
