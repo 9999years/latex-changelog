@@ -1,6 +1,14 @@
-*.hd
-/extra
-*.pdf
+# LaTeX output files.
+*.aux
+*.db_latexmk
 *.fls
+*.log
+*.out
+*.pdf
+*.tmp
+*.toc
+extra
+
+# Nix links.
 /changelog
 /result
