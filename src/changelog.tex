@@ -307,6 +307,7 @@ complete translation looks like this:
 \documentclass{article}
 \usepackage[english]{babel}
 \usepackage{translations}
+\DeclareTranslation{English}{changelog}{Changelog}
 \DeclareTranslation{English}{changelog-Added}{Added}
 \DeclareTranslation{English}{changelog-Changed}{Changed}
 \DeclareTranslation{English}{changelog-Deprecated}{Deprecated}
@@ -328,6 +329,10 @@ package documentation} for more information.
 
 If you create a translation, please \href{mailto:rbt@sent.as}{send me
 an email} and I'll incorporate the translation into \cl's next release!
+
+Please note that the \cl\ package is written in \ctan{expl3}, so translations
+submitted to me should use |~| instead of literal spaces,
+e.g.~|\DeclareTranslation{MyLanguage}{changelog}{Log~of~changes}|.
 
 \section{Contributors}%
 \label{s:contrib}
