@@ -355,6 +355,13 @@ e.g.~|\DeclareTranslation{MyLanguage}{changelog}{Log~of~changes}|.
 This is this package's actual changelog --- not an example!
 
 \begin{changelog}[author=Rebecca Turner <\email{rbt@sent.as}>, section=false]
+\begin{version}[v=2.6.1, date=2025-08-06]
+\fixed
+  \item Translations for Spanish and French now render spaces correctly,
+    e.g.~``Registro de cambios'' instead of ``Registrodecambios'' for the
+    section title.
+\end{version}
+
 \begin{version}[v=2.6.0, date=2024-12-18]
 \changed
 	\item If the \option{label} option for the |changelog| environment is empty,
